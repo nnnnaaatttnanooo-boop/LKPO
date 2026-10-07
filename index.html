@@ -111,7 +111,7 @@
             color: #0f172a;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .form-group label {
             display: block;
@@ -156,7 +156,6 @@
             display: block;
         }
 
-        /* لوحة تحكم العضو والمالية */
         .balance-card {
             background: linear-gradient(135deg, #0284c7, #0369a1);
             padding: 20px;
@@ -199,7 +198,6 @@
             grid-column: span 2;
         }
 
-        /* النوافذ الفرعية للإيداع والسحب */
         .modal-section {
             background: #0f172a;
             border: 1px solid #334155;
@@ -245,6 +243,7 @@
             font-size: 12px;
             color: #38bdf8;
             margin-top: 5px;
+            margin-bottom: 10px;
             word-break: break-all;
             user-select: all;
         }
@@ -341,14 +340,13 @@
                 </div>
             </div>
 
-            <!-- 2. لوحة تحكم العضو (تظهر بعد الدخول) -->
+            <!-- 2. لوحة تحكم العضو -->
             <div id="dashboard-view" class="dashboard-container">
                 <div class="balance-card">
                     <h3>رصيدك الحالي</h3>
                     <div class="amount" id="user-balance">0.00 $</div>
                 </div>
 
-                <!-- أزرار العمليات -->
                 <div class="action-grid">
                     <button class="action-btn" onclick="toggleModal('deposit-modal')">إيداع رقمي</button>
                     <button class="action-btn" onclick="toggleModal('withdraw-modal')">سحب رقمي</button>
@@ -357,7 +355,7 @@
                     <button class="action-btn full-width" onclick="toggleModal('sham-withdraw-modal')">سحب شام كاش</button>
                 </div>
 
-                <!-- نافذة الإيداع الرقمي (3 شبكات) -->
+                <!-- نافذة الإيداع الرقمي (مع إدخال الكمية) -->
                 <div id="deposit-modal" class="modal-section">
                     <div class="sub-tabs">
                         <button class="sub-tab-btn active" onclick="setCryptoNetwork('trc20')">TRC20</button>
@@ -368,10 +366,14 @@
                         <label style="font-size: 12px; color: #94a3b8;">عنوان المحفظة (TRC20):</label>
                         <div class="code-box">TX_LKPO_TRC20_WALLET_ADDRESS_998877</div>
                     </div>
-                    <div class="note">⚠️ ملاحظة: أقل إيداع مسموح به هو 1$. يلزم الإيداع لفتح مستوى VIP2.</div>
+                    <div class="form-group">
+                        <input type="number" placeholder="أدخل كمية الإيداع بالدولار">
+                    </div>
+                    <button class="submit-btn" style="padding: 8px; font-size: 14px;" onclick="alert('تم إرسال طلب الإيداع الرقمي بنجاح!')">تأكيد طلب الإيداع</button>
+                    <div class="note">⚠️ ملاحظة: أقل إيداع مسموح به هو 1$.</div>
                 </div>
 
-                <!-- نافذة السحب الرقمي (3 شبكات) -->
+                <!-- نافذة السحب الرقمي (مع إدخال المبلغ وعنوان المحفظة) -->
                 <div id="withdraw-modal" class="modal-section">
                     <div class="sub-tabs">
                         <button class="sub-tab-btn active" onclick="setWithdrawNetwork('trc20')">TRC20</button>
@@ -379,16 +381,23 @@
                         <button class="sub-tab-btn" onclick="setWithdrawNetwork('erc20')">ERC20</button>
                     </div>
                     <div class="form-group" style="margin-top: 10px;">
+                        <input type="text" placeholder="أدخل عنوان محفظتك لاستلام السحب">
+                    </div>
+                    <div class="form-group">
                         <input type="number" placeholder="أدخل مبلغ السحب بالدولار">
                     </div>
-                    <button class="submit-btn" style="padding: 8px; font-size: 14px;" onclick="alert('تم إرسال طلب السحب بنجاح!')">تأكيد طلب السحب</button>
+                    <button class="submit-btn" style="padding: 8px; font-size: 14px;" onclick="alert('تم إرسال طلب السحب الرقمي بنجاح!')">تأكيد طلب السحب</button>
                     <div class="note">⚠️ ملاحظة: السحب متاح على مدار 24/7. أقل حد للسحب هو 1.5$.</div>
                 </div>
 
-                <!-- نافذة إيداع شام كاش -->
+                <!-- نافذة إيداع شام كاش (مع إدخال الكمية) -->
                 <div id="sham-deposit-modal" class="modal-section">
                     <label style="font-size: 12px; color: #94a3b8;">كود حساب شام كاش للإيداع:</label>
                     <div class="code-box">SHAM-CASH-LKPO-9922</div>
+                    <div class="form-group">
+                        <input type="number" placeholder="أدخل كمية الإيداع بالليرة السورية">
+                    </div>
+                    <button class="submit-btn" style="padding: 8px; font-size: 14px;" onclick="alert('تم إرسال طلب إيداع شام كاش بنجاح!')">تأكيد إيداع شام كاش</button>
                     <div class="note">⚠️ ملاحظة: الإيداع بالعملة السورية الجديدة. أقل حد للايداع هو 100 ل.س.</div>
                 </div>
 
@@ -423,14 +432,12 @@
             }
         }
 
-        // محاكاة تسجيل الدخول والانتقال للوحة التحكم برصيد 0
         function loginSuccess() {
             document.getElementById('auth-wrapper').style.display = 'none';
             document.getElementById('dashboard-view').classList.add('active');
             alert('تم تسجيل الدخول بنجاح! رصيدك الحالي 0$');
         }
 
-        // تبديل ظهور النوافذ المالية
         function toggleModal(modalId) {
             const modals = ['deposit-modal', 'withdraw-modal', 'sham-deposit-modal', 'sham-withdraw-modal'];
             modals.forEach(id => {
@@ -443,7 +450,6 @@
             });
         }
 
-        // تبديل شبكات الإيداع الرقمي
         function setCryptoNetwork(net) {
             const boxes = {
                 'trc20': 'TX_LKPO_TRC20_WALLET_ADDRESS_998877',
@@ -456,9 +462,8 @@
             `;
         }
 
-        // تبديل شبكات السحب
         function setWithdrawNetwork(net) {
-            // يمكن تخصيص عرض إضافي حسب الشبكة إذا لزم
+            // تخصيص إضافي للشبكة إن لزم
         }
 
         function toggleNotifications() {
