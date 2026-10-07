@@ -161,7 +161,7 @@
             padding: 20px;
             border-radius: 15px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .balance-card h3 {
             font-size: 14px;
@@ -173,6 +173,20 @@
             font-weight: 800;
             color: #fff;
         }
+        
+        .account-status-btn {
+            background: #1e293b;
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
         .action-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -193,6 +207,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            font-size: 13px;
         }
         .action-btn:hover {
             background: #38bdf8;
@@ -200,6 +215,60 @@
         }
         .action-btn.full-width {
             grid-column: span 2;
+        }
+
+        /* أسعار العملات الرقمية الحية */
+        .crypto-market-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .crypto-market-title {
+            font-size: 12px;
+            color: #38bdf8;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .crypto-ticker-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            color: #cbd5e1;
+        }
+        .crypto-ticker-item:last-child {
+            border-bottom: none;
+        }
+        .price-up { color: #22c55e; }
+        .price-down { color: #ef4444; }
+
+        /* منبر إثباتات السحب */
+        .proof-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 15px;
+            max-height: 90px;
+            overflow: hidden;
+            position: relative;
+        }
+        .proof-title {
+            font-size: 11px;
+            color: #fbbf24;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        .proof-ticker {
+            font-size: 11px;
+            color: #94a3b8;
+            text-align: center;
+            animation: fadeInOut 4s infinite;
         }
 
         .modal-section {
@@ -255,7 +324,7 @@
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
             border: 1px solid #ef4444;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         .logout-btn:hover {
             background: #ef4444;
@@ -324,11 +393,11 @@
                 <div id="register-form" class="form-container active" style="display:block;">
                     <div class="form-group">
                         <label>البريد الإلكتروني</label>
-                        <input type="email" id="reg-email" placeholder="example@gmail.com" required>
+                        <input type="email" placeholder="example@gmail.com" required>
                     </div>
                     <div class="form-group">
                         <label>كلمة السر</label>
-                        <input type="password" id="reg-pass" placeholder="••••••••" required>
+                        <input type="password" placeholder="••••••••" required>
                     </div>
                     <div class="form-group">
                         <label>تأكيد كلمة السر</label>
@@ -344,7 +413,7 @@
                 <div id="login-form" class="form-container" style="display:none;">
                     <div class="form-group">
                         <label>البريد الإلكتروني</label>
-                        <input type="email" id="log-email" placeholder="example@gmail.com" required>
+                        <input type="email" placeholder="example@gmail.com" required>
                     </div>
                     <div class="form-group">
                         <label>كلمة السر</label>
@@ -361,6 +430,11 @@
                     <div class="amount" id="user-balance">0.00 $</div>
                 </div>
 
+                <!-- زر رصيد الحساب تحت بطاقة الرصيد وأزرار الإيداع -->
+                <div class="account-status-btn">
+                    حالة الحساب: نشط (رصيد أساسي 0)
+                </div>
+
                 <div class="action-grid">
                     <button class="action-btn" onclick="toggleModal('deposit-modal')">إيداع رقمي</button>
                     <button class="action-btn" onclick="toggleModal('withdraw-modal')">سحب رقمي</button>
@@ -368,8 +442,34 @@
                     <button class="action-btn full-width" onclick="toggleModal('sham-deposit-modal')">إيداع شام كاش</button>
                     <button class="action-btn full-width" onclick="toggleModal('sham-withdraw-modal')">سحب شام كاش</button>
                     
-                    <!-- زر الانتقال لصفحة روبوتات الاستثمار المستقلة -->
                     <a href="robots.html" class="action-btn full-width" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: #0f172a;">🤖 روبوتات الاستثمار الذكي</a>
+                </div>
+
+                <!-- قسم العملات الرقمية المتغيرة حسب السوق -->
+                <div class="crypto-market-box">
+                    <div class="crypto-market-title">📈 أسعار العملات الرقمية الحية (تتغير تلقائياً)</div>
+                    <div class="crypto-ticker-item">
+                        <span>Bitcoin (BTC)</span>
+                        <span id="btc-price" class="price-up">$91,420.00</span>
+                    </div>
+                    <div class="crypto-ticker-item">
+                        <span>Ethereum (ETH)</span>
+                        <span id="eth-price" class="price-up">$3,410.50</span>
+                    </div>
+                    <div class="crypto-ticker-item">
+                        <span>Solana (SOL)</span>
+                        <span id="sol-price" class="price-down">$182.30</span>
+                    </div>
+                    <div class="crypto-ticker-item">
+                        <span>TRON (TRX)</span>
+                        <span id="trx-price" class="price-up">$0.245</span>
+                    </div>
+                </div>
+
+                <!-- منبر إثباتات السحب (5000 ل.س, 5$, 10000 ل.س, 70$) -->
+                <div class="proof-box">
+                    <div class="proof-title">🏆 منبر إثباتات السحب الفورية</div>
+                    <div class="proof-ticker" id="proof-text">جاري تحميل أحدث السحوبات...</div>
                 </div>
 
                 <button class="submit-btn logout-btn" onclick="logout()">تسجيل الخروج</button>
@@ -438,18 +538,18 @@
     </div>
 
     <script>
-        // التحقق من حالة تسجيل الدخول لمنع العودة لصفحة التسجيل عند التحديث
         window.onload = function() {
             const isLoggedIn = localStorage.getItem('lkpo_logged_in');
             if (isLoggedIn === 'true') {
                 document.getElementById('auth-wrapper').style.display = 'none';
                 document.getElementById('dashboard-view').classList.add('active');
             }
+            startLiveCryptoTicker();
+            startProofTicker();
         };
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            
             if (tabName === 'register') {
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 document.getElementById('register-form').style.display = 'block';
@@ -465,7 +565,7 @@
             localStorage.setItem('lkpo_logged_in', 'true');
             document.getElementById('auth-wrapper').style.display = 'none';
             document.getElementById('dashboard-view').classList.add('active');
-            alert('تم بنجاح! رصيدك الحالي 0$');
+            alert('تم تسجيل الدخول بنجاح! رصيدك الحالي 0$');
         }
 
         function logout() {
@@ -498,6 +598,37 @@
         }
 
         function setWithdrawNetwork(net) {}
+
+        // محاكاة التغير الحي لأسعار العملات الرقمية بناءً على تقلبات السوق
+        function startLiveCryptoTicker() {
+            setInterval(() => {
+                let btc = 91420 + (Math.random() * 40 - 20);
+                let eth = 3410 + (Math.random() * 10 - 5);
+                let sol = 182 + (Math.random() * 4 - 2);
+                let trx = 0.245 + (Math.random() * 0.004 - 0.002);
+
+                document.getElementById('btc-price').innerText = `$${btc.toFixed(2)}`;
+                document.getElementById('eth-price').innerText = `$${eth.toFixed(2)}`;
+                document.getElementById('sol-price').innerText = `$${sol.toFixed(2)}`;
+                document.getElementById('trx-price').innerText = `$${trx.toFixed(4)}`;
+            }, 3000);
+        }
+
+        // منبر إثباتات السحب المتجدد
+        function startProofTicker() {
+            const proofs = [
+                "✨ تم سحب بنجاح: 5000 ليرة سورية (شام كاش) - العضو: m***3",
+                "🚀 تم سحب بنجاح: 70$ (منصة رقمية) - العضو: a***7",
+                "✨ تم سحب بنجاح: 10000 ليرة سورية (شام كاش) - العضو: r***2",
+                "🚀 تم سحب بنجاح: 5$ (منصة رقمية) - العضو: k***9"
+            ];
+            let index = 0;
+            const proofEl = document.getElementById('proof-text');
+            setInterval(() => {
+                proofEl.innerText = proofs[index];
+                index = (index + 1) % proofs.length;
+            }, 3500);
+        }
 
         function toggleNotifications() {
             const dropdown = document.getElementById('notif-dropdown');
