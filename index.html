@@ -1,673 +1,154 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="html-root">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LKPO - منصة العمل الرقمي</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            color: #f8fafc;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: rgba(15, 23, 42, 0.9);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .brand h1 {
-            font-size: 20px;
-            color: #38bdf8;
-            font-weight: 800;
-            letter-spacing: 1px;
-        }
-        .verified-badge {
-            color: #38bdf8;
-            background: rgba(56, 189, 248, 0.1);
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 10px;
-        }
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .icon-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: background 0.3s;
-        }
-        .icon-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .main-content {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .container {
-            background: rgba(30, 41, 59, 0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            width: 100%;
-            max-width: 450px;
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-        }
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            background: #0f172a;
-            border-radius: 10px;
-            padding: 4px;
-        }
-        .tab-btn {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            padding: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-        .tab-btn.active {
-            background: #38bdf8;
-            color: #0f172a;
-        }
-        .form-group {
-            margin-bottom: 12px;
-        }
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            color: #cbd5e1;
-            margin-bottom: 5px;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        .form-group input:focus {
-            border-color: #38bdf8;
-        }
-        .submit-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #38bdf8, #0284c7);
-            border: none;
-            border-radius: 10px;
-            color: #0f172a;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: opacity 0.3s;
-        }
-        .submit-btn:hover {
-            opacity: 0.9;
-        }
-        
-        /* التحكم في إظهار الأقسام داخل نفس الصفحة */
-        .page-section {
-            display: none;
-        }
-        .page-section.active {
-            display: block;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة AKPO</title>
+  <!-- مكتبة الأيقونات FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        .balance-card {
-            background: linear-gradient(135deg, #0284c7, #0369a1);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        .balance-card h3 {
-            font-size: 14px;
-            color: #e0f2fe;
-            margin-bottom: 5px;
-        }
-        .balance-card .amount {
-            font-size: 28px;
-            font-weight: 800;
-            color: #fff;
-        }
-        
-        .account-status-btn {
-            background: #1e293b;
-            border: 1px solid #38bdf8;
-            color: #38bdf8;
-            padding: 10px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 13px;
-            margin-bottom: 15px;
-            width: 100%;
-        }
+    body {
+      background-color: #f4f6f9;
+      color: #333;
+      padding-bottom: 70px; /* مساحة للشريط السفلي */
+    }
 
-        .action-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .action-btn {
-            padding: 12px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            color: #38bdf8;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            transition: 0.3s;
-            border: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 13px;
-            width: 100%;
-        }
-        .action-btn:hover {
-            background: #38bdf8;
-            color: #0f172a;
-        }
-        .action-btn.full-width {
-            grid-column: span 2;
-        }
+    /* أجزاء الصفحات */
+    .page {
+      display: none;
+      padding: 20px;
+      text-align: center;
+    }
 
-        .crypto-market-box {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 15px;
-        }
-        .crypto-market-title {
-            font-size: 12px;
-            color: #38bdf8;
-            font-weight: bold;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-        .crypto-ticker-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            padding: 4px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            color: #cbd5e1;
-        }
-        .crypto-ticker-item:last-child {
-            border-bottom: none;
-        }
-        .price-up { color: #22c55e; }
-        .price-down { color: #ef4444; }
+    .page.active {
+      display: block;
+    }
 
-        .proof-box {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 10px;
-            margin-bottom: 15px;
-            max-height: 90px;
-            overflow: hidden;
-        }
-        .proof-title {
-            font-size: 11px;
-            color: #fbbf24;
-            font-weight: bold;
-            margin-bottom: 5px;
-            text-align: center;
-        }
-        .proof-ticker {
-            font-size: 11px;
-            color: #94a3b8;
-            text-align: center;
-        }
+    /* الشريط السفلي Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 65px;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      z-index: 1000;
+    }
 
-        .modal-section {
-            background: #0f172a;
-            border: 1px solid #334155;
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 15px;
-            display: none;
-        }
-        .modal-section.active {
-            display: block;
-        }
-        .sub-tabs {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-        .sub-tab-btn {
-            flex: 1;
-            padding: 8px;
-            font-size: 12px;
-            background: #1e293b;
-            border: 1px solid #334155;
-            color: #cbd5e1;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .sub-tab-btn.active {
-            background: #38bdf8;
-            color: #0f172a;
-            font-weight: bold;
-        }
-        .note {
-            font-size: 11px;
-            color: #fbbf24;
-            margin-top: 8px;
-            line-height: 1.4;
-        }
-        .code-box {
-            background: #1e293b;
-            padding: 8px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 12px;
-            color: #38bdf8;
-            margin-top: 5px;
-            margin-bottom: 10px;
-            word-break: break-all;
-            user-select: all;
-        }
-        .logout-btn {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: 1px solid #ef4444;
-            margin-top: 5px;
-        }
-        .logout-btn:hover {
-            background: #ef4444;
-            color: #fff;
-        }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #7f8c8d;
+      text-decoration: none;
+      font-size: 12px;
+      width: 20%;
+      height: 100%;
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+    }
 
-        .back-link {
-            display: inline-block;
-            margin-top: 15px;
-            color: #38bdf8;
-            text-decoration: none;
-            font-size: 13px;
-            cursor: pointer;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
+    .nav-item i {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
 
-        .notifications-dropdown {
-            position: absolute;
-            top: 60px;
-            left: 20px;
-            width: 280px;
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            display: none;
-            z-index: 100;
-            overflow: hidden;
-        }
-        .notifications-header {
-            padding: 10px 15px;
-            background: #0f172a;
-            font-size: 13px;
-            font-weight: bold;
-            border-bottom: 1px solid #334155;
-        }
-        .notification-item {
-            padding: 10px 15px;
-            font-size: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            color: #cbd5e1;
-        }
-    </style>
+    /* الحالة النشطة للزر */
+    .nav-item.active {
+      color: #27ae60; /* لون منصة AKPO المميز */
+      font-weight: bold;
+    }
+
+    .nav-item.active i {
+      transform: translateY(-2px);
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <div class="brand">
-            <span class="verified-badge">✓</span>
-            <h1>LKPO</h1>
-        </div>
-        <div class="header-actions">
-            <button class="icon-btn" onclick="changeLanguage()">🌐 <span id="lang-text">العربية</span></button>
-            <div style="position: relative;">
-                <button class="icon-btn" onclick="toggleNotifications()">💬 <span id="notif-count">1</span></button>
-                <div id="notif-dropdown" class="notifications-dropdown">
-                    <div class="notifications-header">إشعارات النظام</div>
-                    <div id="notif-list">
-                        <div class="notification-item">مرحباً بك في LKPO. رصيدك الحالي 0.</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+  <!-- 1. الصفحة الرئيسية (الرئيسية الأولى) -->
+  <div id="home-page" class="page active">
+    <h2>الرئيسية - منصة AKPO</h2>
+    <p>مرحباً بك في الصفحة الرئيسية للمنصة.</p>
+  </div>
 
-    <div class="main-content">
-        <div class="container">
-            
-            <!-- 1. شاشة التسجيل والدخول -->
-            <div id="auth-section" class="page-section active">
-                <div class="tabs">
-                    <button class="tab-btn active" onclick="switchTab('register')">إنشاء حساب</button>
-                    <button class="tab-btn" onclick="switchTab('login')">تسجيل الدخول</button>
-                </div>
+  <!-- 2. الصفحة الجديدة (المضافة بجانب الرئيسية) -->
+  <div id="new-page" class="page">
+    <h2>الصفحة الجديدة</h2>
+    <p>هنا محتوى الصفحة الجديدة المضافة حديثاً.</p>
+  </div>
 
-                <div id="register-form" style="display:block;">
-                    <div class="form-group">
-                        <label>البريد الإلكتروني</label>
-                        <input type="email" placeholder="example@gmail.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label>كلمة السر</label>
-                        <input type="password" placeholder="••••••••" required>
-                    </div>
-                    <div class="form-group">
-                        <label>تأكيد كلمة السر</label>
-                        <input type="password" placeholder="••••••••" required>
-                    </div>
-                    <div class="form-group">
-                        <label>كود الإحالة (اختياري)</label>
-                        <input type="text" placeholder="أدخل كود الإحالة إن وجد">
-                    </div>
-                    <button class="submit-btn" onclick="loginSuccess()">إنشاء الحساب</button>
-                </div>
+  <!-- 3. باقي صفحات المنصة (أمثلة) -->
+  <div id="vip-page" class="page">
+    <h2>مستويات VIP</h2>
+    <p>قسم مستويات VIP والاشتراكات.</p>
+  </div>
 
-                <div id="login-form" style="display:none;">
-                    <div class="form-group">
-                        <label>البريد الإلكتروني</label>
-                        <input type="email" placeholder="example@gmail.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label>كلمة السر</label>
-                        <input type="password" placeholder="••••••••" required>
-                    </div>
-                    <button class="submit-btn" onclick="loginSuccess()">تسجيل الدخول</button>
-                </div>
-            </div>
+  <div id="profile-page" class="page">
+    <h2>الحساب الشخصي</h2>
+    <p>إعدادات وتفاصيل الحساب.</p>
+  </div>
 
-            <!-- 2. لوحة تحكم العضو (الرئيسية) -->
-            <div id="dashboard-section" class="page-section">
-                <div class="balance-card">
-                    <h3>رصيدك الحالي</h3>
-                    <div class="amount" id="user-balance">0.00 $</div>
-                </div>
 
-                <div class="account-status-btn">
-                    حالة الحساب: نشط (رصيد أساسي 0)
-                </div>
-
-                <div class="action-grid">
-                    <button class="action-btn" onclick="toggleModal('deposit-modal')">إيداع رقمي</button>
-                    <button class="action-btn" onclick="toggleModal('withdraw-modal')">سحب رقمي</button>
-                    
-                    <button class="action-btn full-width" onclick="toggleModal('sham-deposit-modal')">إيداع شام كاش</button>
-                    <button class="action-btn full-width" onclick="toggleModal('sham-withdraw-modal')">سحب شام كاش</button>
-                    
-                    <!-- زر الانتقال لصفحة الاستثمار داخل نفس الملف -->
-                    <button class="action-btn full-width" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: #0f172a;" onclick="navigateTo('invest-section')">📈 صفحة الاستثمار</button>
-                </div>
-
-                <!-- أسعار العملات الرقمية الحية -->
-                <div class="crypto-market-box">
-                    <div class="crypto-market-title">📈 أسعار العملات الرقمية الحية</div>
-                    <div class="crypto-ticker-item">
-                        <span>Bitcoin (BTC)</span>
-                        <span id="btc-price" class="price-up">$91,420.00</span>
-                    </div>
-                    <div class="crypto-ticker-item">
-                        <span>Ethereum (ETH)</span>
-                        <span id="eth-price" class="price-up">$3,410.50</span>
-                    </div>
-                    <div class="crypto-ticker-item">
-                        <span>Solana (SOL)</span>
-                        <span id="sol-price" class="price-down">$182.30</span>
-                    </div>
-                    <div class="crypto-ticker-item">
-                        <span>TRON (TRX)</span>
-                        <span id="trx-price" class="price-up">$0.245</span>
-                    </div>
-                </div>
-
-                <!-- منبر إثباتات السحب -->
-                <div class="proof-box">
-                    <div class="proof-title">🏆 منبر إثباتات السحب الفورية</div>
-                    <div class="proof-ticker" id="proof-text">جاري التحميل...</div>
-                </div>
-
-                <button class="submit-btn logout-btn" onclick="logout()">تسجيل الخروج</button>
-
-                <!-- نافذة الإيداع الرقمي -->
-                <div id="deposit-modal" class="modal-section">
-                    <div class="sub-tabs">
-                        <button class="sub-tab-btn active" onclick="setCryptoNetwork('trc20')">TRC20</button>
-                        <button class="sub-tab-btn" onclick="setCryptoNetwork('bep20')">BEP20</button>
-                        <button class="sub-tab-btn" onclick="setCryptoNetwork('erc20')">ERC20</button>
-                    </div>
-                    <div id="crypto-dep-content">
-                        <label style="font-size: 12px; color: #94a3b8;">عنوان المحفظة (TRC20):</label>
-                        <div class="code-box">TX_LKPO_TRC20_WALLET_ADDRESS_998877</div>
-                    </div>
-                    <div class="form-group">
-                        <input type="number" placeholder="أدخل كمية الإيداع بالدولار">
-                    </div>
-                    <button class="submit-btn" style="padding: 8px; font-size: 14px;" onclick="alert('تم إرسال طلب الإيداع الرقمي بنجاح!')">تأكيد طلب الإيداع</button>
-                    <div class="note">⚠️ ملاحظة: أقل إيداع مسموح به هو 1$.</div>
-                </div>
-
-                <!-- نافذة السحب الرقمي -->
-                <div id="withdraw-modal" class="modal-section">
-                    <div class="sub-tabs">
-                        <button class="sub-tab-btn active" onclick="setWithdrawNetwork('trc20')">TRC20</button>
-                        <button class="sub-tab-btn" onclick="setWithdrawNetwork('bep20')">BEP20</button>
-                        <button class="sub-tab-btn" onclick="setWithdrawNetwork('erc20')">ERC20</button>
-                    </div>
-                    <div class="form-group" style="margin-top: 10px;">
-                        <input type="text" placeholder="أدخل عنوان محفظتك لاستلاستلام السحب">
-                    </div>
-                    <div class="form-group">
-                        <input type="number" placeholder="أدخل مبلغ السحب بالدولار">
-                    </div>
-                    <button class="submit-btn" style="padding: 8px; font-size: 14px;" onclick="alert('تم إرسال طلب السحب الرقمي بنجاح!')">تأكيد طلب السحب</button>
-                    <div class="note">⚠️ ملاحظة: السحب متاح على مدار 24/7. أقل حد للسحب هو 1.5$.</div>
-                </div>
-
-                <!-- نافذة إيداع شام كاش -->
-                <div id="sham-deposit-modal" class="modal-section">
-                    <label style="font-size: 12px; color: #94a3b8;">كود حساب شام كاش للإيداع:</label>
-                    <div class="code-box">SHAM-CASH-LKPO-9922</div>
-                    <div class="form-group">
-                        <input type="number" placeholder="أدخل كمية الإيداع بالليرة السورية">
-                    </div>
-                    <button class="submit-btn" style="padding: 8px; font-size: 14px;" onclick="alert('تم إرسال طلب إيداع شام كاش بنجاح!')">تأكيد إيداع شام كاش</button>
-                    <div class="note">⚠️ ملاحظة: الإيداع بالعملة السورية الجديدة. أقل حد للايداع هو 100 ل.س.</div>
-                </div>
-
-                <!-- نافذة سحب شام كاش -->
-                <div id="sham-withdraw-modal" class="modal-section">
-                    <div class="form-group">
-                        <input type="text" placeholder="رقم أو حساب شام كاش الخاص بك">
-                    </div>
-                    <div class="form-group">
-                        <input type="number" placeholder="المبلغ بالليرة السورية">
-                    </div>
-                    <button class="submit-btn" style="padding: 8px; font-size: 14px;" onclick="alert('تم إرسال طلب سحب شام كاش بنجاح!')">إرسال طلب السحب</button>
-                    <div class="note">⚠️ ملاحظة: أقل حد للسحب هو 500 ل.س.</div>
-                </div>
-
-            </div>
-
-            <!-- 3. صفحة الاستثمار الفارغة داخل نفس الملف -->
-            <div id="invest-section" class="page-section" style="text-align: center;">
-                <h2 style="color: #38bdf8; margin-bottom: 10px;">صفحة الاستثمار</h2>
-                <p style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;">هذه الصفحة فارغة ومجهزة لإضافاتك المستقبلية.</p>
-                <a class="back-link" onclick="navigateTo('dashboard-section')">← العودة إلى الرئيسية</a>
-            </div>
-
-        </div>
+  <!-- ===== الشريط السفلي للنظام (Bottom Navigation Bar) ===== -->
+  <nav class="bottom-nav">
+    
+    <!-- 1. زر الرئيسية -->
+    <div class="nav-item active" onclick="switchTab('home-page', this)">
+      <i class="fa-solid fa-house"></i>
+      <span>الرئيسية</span>
     </div>
 
-    <script>
-        window.onload = function() {
-            const isLoggedIn = localStorage.getItem('lkpo_logged_in');
-            if (isLoggedIn === 'true') {
-                document.getElementById('auth-section').classList.remove('active');
-                document.getElementById('dashboard-section').classList.add('active');
-            }
-            startLiveCryptoTicker();
-            startProofTicker();
-        };
+    <!-- 2. الزر الجديد المضاف بجانب الرئيسية تماماً -->
+    <div class="nav-item" onclick="switchTab('new-page', this)">
+      <i class="fa-solid fa-layer-group"></i> <!-- يمكنك تغيير الأيقونة من هنا -->
+      <span>الصفحة الجديدة</span>
+    </div>
 
-        // دالة التنقل السلس بين أقسام الصفحة الواحدة
-        function navigateTo(sectionId) {
-            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-        }
+    <!-- 3. زر مستويات VIP -->
+    <div class="nav-item" onclick="switchTab('vip-page', this)">
+      <i class="fa-solid fa-crown"></i>
+      <span>VIP</span>
+    </div>
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            if (tabName === 'register') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('register-form').style.display = 'block';
-                document.getElementById('login-form').style.display = 'none';
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('register-form').style.display = 'none';
-                document.getElementById('login-form').style.display = 'block';
-            }
-        }
+    <!-- 4. زر الشخصي / الحساب -->
+    <div class="nav-item" onclick="switchTab('profile-page', this)">
+      <i class="fa-solid fa-user"></i>
+      <span>حسابي</span>
+    </div>
 
-        function loginSuccess() {
-            localStorage.setItem('lkpo_logged_in', 'true');
-            navigateTo('dashboard-section');
-            alert('تم تسجيل الدخول بنجاح! رصيدك الحالي 0$');
-        }
+  </nav>
 
-        function logout() {
-            localStorage.removeItem('lkpo_logged_in');
-            navigateTo('auth-section');
-        }
+  <!-- JavaScript للتنقل بين الصفحات -->
+  <script>
+    function switchTab(pageId, element) {
+      // إخفاء كل الصفحات
+      const pages = document.querySelectorAll('.page');
+      pages.forEach(page => page.classList.remove('active'));
 
-        function toggleModal(modalId) {
-            const modals = ['deposit-modal', 'withdraw-modal', 'sham-deposit-modal', 'sham-withdraw-modal'];
-            modals.forEach(id => {
-                const el = document.getElementById(id);
-                if (id === modalId) {
-                    el.classList.toggle('active');
-                } else {
-                    el.classList.remove('active');
-                }
-            });
-        }
+      // إزالة التفعيل عن جميع الأزرار
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => item.classList.remove('active'));
 
-        function setCryptoNetwork(net) {
-            const boxes = {
-                'trc20': 'TX_LKPO_TRC20_WALLET_ADDRESS_998877',
-                'bep20': '0xLKPO_BEP20_WALLET_ADDRESS_554433',
-                'erc20': '0xLKPO_ERC20_WALLET_ADDRESS_112233'
-            };
-            document.getElementById('crypto-dep-content').innerHTML = `
-                <label style="font-size: 12px; color: #94a3b8;">عنوان المحفظة (${net.toUpperCase()}):</label>
-                <div class="code-box">${boxes[net]}</div>
-            `;
-        }
-
-        function setWithdrawNetwork(net) {}
-
-        function startLiveCryptoTicker() {
-            setInterval(() => {
-                let btc = 91420 + (Math.random() * 40 - 20);
-                let eth = 3410 + (Math.random() * 10 - 5);
-                let sol = 182 + (Math.random() * 4 - 2);
-                let trx = 0.245 + (Math.random() * 0.004 - 0.002);
-
-                document.getElementById('btc-price').innerText = `$${btc.toFixed(2)}`;
-                document.getElementById('eth-price').innerText = `$${eth.toFixed(2)}`;
-                document.getElementById('sol-price').innerText = `$${sol.toFixed(2)}`;
-                document.getElementById('trx-price').innerText = `$${trx.toFixed(4)}`;
-            }, 3000);
-        }
-
-        function startProofTicker() {
-            const proofs = [
-                "✨ تم سحب بنجاح: 5000 ليرة سورية (شام كاش) - العضو: m***3",
-                "🚀 تم سحب بنجاح: 70$ (منصة رقمية) - العضو: a***7",
-                "✨ تم سحب بنجاح: 10000 ليرة سورية (شام كاش) - العضو: r***2",
-                "🚀 تم سحب بنجاح: 5$ (منصة رقمية) - العضو: k***9"
-            ];
-            let index = 0;
-            const proofEl = document.getElementById('proof-text');
-            setInterval(() => {
-                proofEl.innerText = proofs[index];
-                index = (index + 1) % proofs.length;
-            }, 3500);
-        }
-
-        function toggleNotifications() {
-            const dropdown = document.getElementById('notif-dropdown');
-            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-        }
-
-        let currentLang = 'ar';
-        function changeLanguage() {
-            if (currentLang === 'ar') {
-                currentLang = 'en';
-                document.getElementById('lang-text').innerText = 'English';
-                document.getElementById('html-root').setAttribute('dir', 'ltr');
-            } else {
-                currentLang = 'ar';
-                document.getElementById('lang-text').innerText = 'العربية';
-                document.getElementById('html-root').setAttribute('dir', 'rtl');
-            }
-        }
-    </script>
+      // إظهار الصفحة المطلوبة وتفعيل الزر المضغط عليه
+      document.getElementById(pageId).classList.add('active');
+      element.classList.add('active');
+    }
+  </script>
 </body>
 </html>
