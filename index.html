@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منصة AKPO</title>
+  <title>منصة LKPO - Sham Cash</title>
   <!-- مكتبة الأيقونات FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
@@ -18,18 +18,122 @@
     body {
       background-color: #f4f6f9;
       color: #333;
-      padding-bottom: 70px; /* مساحة للشريط السفلي */
+      padding-bottom: 80px; /* مساحة للشريط السفلي */
     }
 
     /* أجزاء الصفحات */
     .page {
       display: none;
       padding: 20px;
-      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     .page.active {
       display: block;
+    }
+
+    /* كارت الرصيد والمعلومات */
+    .balance-card {
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      color: white;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.25);
+    }
+
+    .balance-card h3 {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+
+    .balance-card .amount {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    /* عناوين الأقسام */
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    /* كارت شام كاش المخصص */
+    .sham-cash-card {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 15px;
+      border: 2px solid #27ae60;
+      background-color: #f0fff4;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .sham-cash-card i {
+      font-size: 35px;
+      color: #27ae60;
+    }
+
+    .sham-cash-card .info h4 {
+      font-size: 16px;
+      color: #2c3e50;
+    }
+
+    .sham-cash-card .info p {
+      font-size: 12px;
+      color: #666;
+    }
+
+    /* نموذج طلب السحب */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #444;
+      font-weight: bold;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: #27ae60;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover {
+      background-color: #219150;
     }
 
     /* الشريط السفلي Bottom Navigation */
@@ -68,9 +172,8 @@
       margin-bottom: 4px;
     }
 
-    /* الحالة النشطة للزر */
     .nav-item.active {
-      color: #27ae60; /* لون منصة AKPO المميز */
+      color: #27ae60;
       font-weight: bold;
     }
 
@@ -81,52 +184,85 @@
 </head>
 <body>
 
-  <!-- 1. الصفحة الرئيسية (الرئيسية الأولى) -->
+  <!-- 1. الصفحة الرئيسية -->
   <div id="home-page" class="page active">
-    <h2>الرئيسية - منصة AKPO</h2>
-    <p>مرحباً بك في الصفحة الرئيسية للمنصة.</p>
+    <div class="balance-card">
+      <h3>رصيد الحساب الحالي</h3>
+      <div class="amount">$0.00</div>
+    </div>
+    <h3 class="section-title">مرحباً بك في منصة LKPO</h3>
+    <p style="color: #666; line-height: 1.6;">يمكنك متابعة حسابك وسحب أرباحك مباشرة عبر شبكة شام كاش المعتمدة.</p>
   </div>
 
-  <!-- 2. الصفحة الجديدة (المضافة بجانب الرئيسية) -->
-  <div id="new-page" class="page">
-    <h2>الصفحة الجديدة</h2>
-    <p>هنا محتوى الصفحة الجديدة المضافة حديثاً.</p>
+  <!-- 2. صفحة سحب شام كاش فقط (المضافة بجانب الرئيسية) -->
+  <div id="withdraw-page" class="page">
+    <h3 class="section-title">سحب عبر شام كاش (Sham Cash)</h3>
+    
+    <!-- بطاقة تأكيد طريقة شام كاش -->
+    <div class="sham-cash-card">
+      <i class="fa-solid fa-wallet"></i>
+      <div class="info">
+        <h4>شام كاش / Sham Cash</h4>
+        <p>طريقة السحب المعتمدة والوحيدة المتاحة في الحساب</p>
+      </div>
+    </div>
+
+    <!-- نموذج إدخال بيانات السحب -->
+    <form onsubmit="handleWithdraw(event)">
+      <div class="form-group">
+        <label>المبلغ المراد سحبه ($)</label>
+        <input type="number" placeholder="أدخل المبلغ المطلوب" min="10" required>
+      </div>
+
+      <div class="form-group">
+        <label>عنوان أو رقم حساب شام كاش</label>
+        <input type="text" placeholder="أدخل رقم/عنوان محفظة شام كاش الخاصة بك" required>
+      </div>
+
+      <div class="form-group">
+        <label>اسم صاحب الحساب بالكامل</label>
+        <input type="text" placeholder="اكتب اسمك الثلاثي في شام كاش" required>
+      </div>
+
+      <button type="submit" class="btn-submit">تأكيد طلب السحب</button>
+    </form>
   </div>
 
-  <!-- 3. باقي صفحات المنصة (أمثلة) -->
+  <!-- 3. صفحة VIP -->
   <div id="vip-page" class="page">
-    <h2>مستويات VIP</h2>
-    <p>قسم مستويات VIP والاشتراكات.</p>
+    <h3 class="section-title">مستويات VIP</h3>
+    <p style="color: #666;">فتح المستوى VIP2 يتطلب إجراء عملية إيداع وتأكيدها أولاً.</p>
   </div>
 
+  <!-- 4. صفحة حسابي -->
   <div id="profile-page" class="page">
-    <h2>الحساب الشخصي</h2>
-    <p>إعدادات وتفاصيل الحساب.</p>
+    <h3 class="section-title">الملف الشخصي</h3>
+    <p style="color: #666;">تفاصيل وإعدادات حسابك في LKPO.</p>
   </div>
 
 
   <!-- ===== الشريط السفلي للنظام (Bottom Navigation Bar) ===== -->
   <nav class="bottom-nav">
     
-    <!-- 1. زر الرئيسية -->
+    <!-- 1. الرئيسية -->
     <div class="nav-item active" onclick="switchTab('home-page', this)">
       <i class="fa-solid fa-house"></i>
       <span>الرئيسية</span>
     </div>
 
-    <!-- 2. الزر الجديد المضاف بجانب الرئيسية تماماً -->
-    <div class="nav-item" onclick="switchTab('new-page', this)">
-      <i class="fa-solid fa-layer-group"></i> <!-- يمكنك تغيير الأيقونة من هنا -->
-      <span>الصفحة الجديدة</span>
+    <!-- 2. زر سحب شام كاش بجانب الرئيسية مباشرة -->
+    <div class="nav-item" onclick="switchTab('withdraw-page', this)">
+      <i class="fa-solid fa-wallet"></i>
+      <span>شام كاش</span>
     </div>
 
-    <!-- 3. زر مستويات VIP -->
+    <!-- 3. زر VIP -->
     <div class="nav-item" onclick="switchTab('vip-page', this)">
       <i class="fa-solid fa-crown"></i>
       <span>VIP</span>
     </div>
 
-    <!-- 4. زر الشخصي / الحساب -->
+    <!-- 4. زر حسابي -->
     <div class="nav-item" onclick="switchTab('profile-page', this)">
       <i class="fa-solid fa-user"></i>
       <span>حسابي</span>
@@ -134,20 +270,22 @@
 
   </nav>
 
-  <!-- JavaScript للتنقل بين الصفحات -->
+  <!-- JavaScript للتنقل والتحكم -->
   <script>
     function switchTab(pageId, element) {
-      // إخفاء كل الصفحات
       const pages = document.querySelectorAll('.page');
       pages.forEach(page => page.classList.remove('active'));
 
-      // إزالة التفعيل عن جميع الأزرار
       const navItems = document.querySelectorAll('.nav-item');
       navItems.forEach(item => item.classList.remove('active'));
 
-      // إظهار الصفحة المطلوبة وتفعيل الزر المضغط عليه
       document.getElementById(pageId).classList.add('active');
       element.classList.add('active');
+    }
+
+    function handleWithdraw(event) {
+      event.preventDefault();
+      alert("تم إرسال طلب السحب بنجاح عبر شام كاش!\nسيتم مراجعة الطلب وتحويل المبلغ بعد التأكيد.");
     }
   </script>
 </body>
