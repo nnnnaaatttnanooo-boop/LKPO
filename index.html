@@ -217,7 +217,6 @@
             grid-column: span 2;
         }
 
-        /* أسعار العملات الرقمية الحية */
         .crypto-market-box {
             background: #0f172a;
             border: 1px solid #334155;
@@ -246,7 +245,6 @@
         .price-up { color: #22c55e; }
         .price-down { color: #ef4444; }
 
-        /* منبر إثباتات السحب */
         .proof-box {
             background: #0f172a;
             border: 1px solid #334155;
@@ -255,7 +253,6 @@
             margin-bottom: 15px;
             max-height: 90px;
             overflow: hidden;
-            position: relative;
         }
         .proof-title {
             font-size: 11px;
@@ -268,7 +265,6 @@
             font-size: 11px;
             color: #94a3b8;
             text-align: center;
-            animation: fadeInOut 4s infinite;
         }
 
         .modal-section {
@@ -430,7 +426,6 @@
                     <div class="amount" id="user-balance">0.00 $</div>
                 </div>
 
-                <!-- زر رصيد الحساب تحت بطاقة الرصيد وأزرار الإيداع -->
                 <div class="account-status-btn">
                     حالة الحساب: نشط (رصيد أساسي 0)
                 </div>
@@ -442,12 +437,13 @@
                     <button class="action-btn full-width" onclick="toggleModal('sham-deposit-modal')">إيداع شام كاش</button>
                     <button class="action-btn full-width" onclick="toggleModal('sham-withdraw-modal')">سحب شام كاش</button>
                     
+                    <!-- زر الانتقال لصفحة الروبوتات المستقلة -->
                     <a href="robots.html" class="action-btn full-width" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: #0f172a;">🤖 روبوتات الاستثمار الذكي</a>
                 </div>
 
-                <!-- قسم العملات الرقمية المتغيرة حسب السوق -->
+                <!-- أسعار العملات الرقمية الحية -->
                 <div class="crypto-market-box">
-                    <div class="crypto-market-title">📈 أسعار العملات الرقمية الحية (تتغير تلقائياً)</div>
+                    <div class="crypto-market-title">📈 أسعار العملات الرقمية الحية</div>
                     <div class="crypto-ticker-item">
                         <span>Bitcoin (BTC)</span>
                         <span id="btc-price" class="price-up">$91,420.00</span>
@@ -466,10 +462,10 @@
                     </div>
                 </div>
 
-                <!-- منبر إثباتات السحب (5000 ل.س, 5$, 10000 ل.س, 70$) -->
+                <!-- منبر إثباتات السحب -->
                 <div class="proof-box">
                     <div class="proof-title">🏆 منبر إثباتات السحب الفورية</div>
-                    <div class="proof-ticker" id="proof-text">جاري تحميل أحدث السحوبات...</div>
+                    <div class="proof-ticker" id="proof-text">جاري التحميل...</div>
                 </div>
 
                 <button class="submit-btn logout-btn" onclick="logout()">تسجيل الخروج</button>
@@ -599,7 +595,6 @@
 
         function setWithdrawNetwork(net) {}
 
-        // محاكاة التغير الحي لأسعار العملات الرقمية بناءً على تقلبات السوق
         function startLiveCryptoTicker() {
             setInterval(() => {
                 let btc = 91420 + (Math.random() * 40 - 20);
@@ -614,7 +609,6 @@
             }, 3000);
         }
 
-        // منبر إثباتات السحب المتجدد
         function startProofTicker() {
             const proofs = [
                 "✨ تم سحب بنجاح: 5000 ليرة سورية (شام كاش) - العضو: m***3",
