@@ -149,10 +149,12 @@
         .submit-btn:hover {
             opacity: 0.9;
         }
-        .form-container, .dashboard-container {
+        
+        /* التحكم في إظهار الأقسام داخل نفس الصفحة */
+        .page-section {
             display: none;
         }
-        .form-container.active, .dashboard-container.active {
+        .page-section.active {
             display: block;
         }
 
@@ -203,11 +205,12 @@
             cursor: pointer;
             text-align: center;
             transition: 0.3s;
-            text-decoration: none;
+            border: none;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 13px;
+            width: 100%;
         }
         .action-btn:hover {
             background: #38bdf8;
@@ -327,6 +330,18 @@
             color: #fff;
         }
 
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #38bdf8;
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
         .notifications-dropdown {
             position: absolute;
             top: 60px;
@@ -380,13 +395,13 @@
         <div class="container">
             
             <!-- 1. شاشة التسجيل والدخول -->
-            <div id="auth-wrapper" class="form-container active">
+            <div id="auth-section" class="page-section active">
                 <div class="tabs">
                     <button class="tab-btn active" onclick="switchTab('register')">إنشاء حساب</button>
                     <button class="tab-btn" onclick="switchTab('login')">تسجيل الدخول</button>
                 </div>
 
-                <div id="register-form" class="form-container active" style="display:block;">
+                <div id="register-form" style="display:block;">
                     <div class="form-group">
                         <label>البريد الإلكتروني</label>
                         <input type="email" placeholder="example@gmail.com" required>
@@ -406,7 +421,7 @@
                     <button class="submit-btn" onclick="loginSuccess()">إنشاء الحساب</button>
                 </div>
 
-                <div id="login-form" class="form-container" style="display:none;">
+                <div id="login-form" style="display:none;">
                     <div class="form-group">
                         <label>البريد الإلكتروني</label>
                         <input type="email" placeholder="example@gmail.com" required>
@@ -419,8 +434,8 @@
                 </div>
             </div>
 
-            <!-- 2. لوحة تحكم العضو -->
-            <div id="dashboard-view" class="dashboard-container">
+            <!-- 2. لوحة تحكم العضو (الرئيسية) -->
+            <div id="dashboard-section" class="page-section">
                 <div class="balance-card">
                     <h3>رصيدك الحالي</h3>
                     <div class="amount" id="user-balance">0.00 $</div>
@@ -437,8 +452,8 @@
                     <button class="action-btn full-width" onclick="toggleModal('sham-deposit-modal')">إيداع شام كاش</button>
                     <button class="action-btn full-width" onclick="toggleModal('sham-withdraw-modal')">سحب شام كاش</button>
                     
-                    <!-- زر الانتقال لصفحة الروبوتات المستقلة -->
-                    <a href="robots.html" class="action-btn full-width" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: #0f172a;">🤖 روبوتات الاستثمار الذكي</a>
+                    <!-- زر الانتقال لصفحة الاستثمار داخل نفس الملف -->
+                    <button class="action-btn full-width" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: #0f172a;" onclick="navigateTo('invest-section')">📈 صفحة الاستثمار</button>
                 </div>
 
                 <!-- أسعار العملات الرقمية الحية -->
@@ -496,7 +511,7 @@
                         <button class="sub-tab-btn" onclick="setWithdrawNetwork('erc20')">ERC20</button>
                     </div>
                     <div class="form-group" style="margin-top: 10px;">
-                        <input type="text" placeholder="أدخل عنوان محفظتك لاستلام السحب">
+                        <input type="text" placeholder="أدخل عنوان محفظتك لاستلاستلام السحب">
                     </div>
                     <div class="form-group">
                         <input type="number" placeholder="أدخل مبلغ السحب بالدولار">
@@ -530,6 +545,13 @@
 
             </div>
 
+            <!-- 3. صفحة الاستثمار الفارغة داخل نفس الملف -->
+            <div id="invest-section" class="page-section" style="text-align: center;">
+                <h2 style="color: #38bdf8; margin-bottom: 10px;">صفحة الاستثمار</h2>
+                <p style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;">هذه الصفحة فارغة ومجهزة لإضافاتك المستقبلية.</p>
+                <a class="back-link" onclick="navigateTo('dashboard-section')">← العودة إلى الرئيسية</a>
+            </div>
+
         </div>
     </div>
 
@@ -537,12 +559,18 @@
         window.onload = function() {
             const isLoggedIn = localStorage.getItem('lkpo_logged_in');
             if (isLoggedIn === 'true') {
-                document.getElementById('auth-wrapper').style.display = 'none';
-                document.getElementById('dashboard-view').classList.add('active');
+                document.getElementById('auth-section').classList.remove('active');
+                document.getElementById('dashboard-section').classList.add('active');
             }
             startLiveCryptoTicker();
             startProofTicker();
         };
+
+        // دالة التنقل السلس بين أقسام الصفحة الواحدة
+        function navigateTo(sectionId) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -559,14 +587,13 @@
 
         function loginSuccess() {
             localStorage.setItem('lkpo_logged_in', 'true');
-            document.getElementById('auth-wrapper').style.display = 'none';
-            document.getElementById('dashboard-view').classList.add('active');
+            navigateTo('dashboard-section');
             alert('تم تسجيل الدخول بنجاح! رصيدك الحالي 0$');
         }
 
         function logout() {
             localStorage.removeItem('lkpo_logged_in');
-            location.reload();
+            navigateTo('auth-section');
         }
 
         function toggleModal(modalId) {
