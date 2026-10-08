@@ -1,292 +1,785 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منصة LKPO - Sham Cash</title>
-  <!-- مكتبة الأيقونات FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKPO Platform</title>
+    <style>
+        :root {
+            --primary-color: #f0b90b;
+            --bg-color: #121214;
+            --card-bg: #1e2026;
+            --text-color: #ffffff;
+            --text-muted: #848e9c;
+            --border-color: #2b2f36;
+            --success: #0ecb81;
+            --danger: #f6465d;
+        }
 
-    body {
-      background-color: #f4f6f9;
-      color: #333;
-      padding-bottom: 80px; /* مساحة للشريط السفلي */
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    /* أجزاء الصفحات */
-    .page {
-      display: none;
-      padding: 20px;
-      max-width: 600px;
-      margin: 0 auto;
-    }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 70px;
+        }
 
-    .page.active {
-      display: block;
-    }
+        /* Auth Container */
+        .auth-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 25px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
 
-    /* كارت الرصيد والمعلومات */
-    .balance-card {
-      background: linear-gradient(135deg, #27ae60, #2ecc71);
-      color: white;
-      padding: 20px;
-      border-radius: 15px;
-      text-align: center;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.25);
-    }
+        .auth-container h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
 
-    .balance-card h3 {
-      font-size: 14px;
-      opacity: 0.9;
-      margin-bottom: 8px;
-    }
+        .form-group {
+            margin-bottom: 15px;
+        }
 
-    .balance-card .amount {
-      font-size: 32px;
-      font-weight: bold;
-    }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
 
-    /* عناوين الأقسام */
-    .section-title {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 15px;
-      color: #2c3e50;
-    }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            border-radius: 6px;
+            outline: none;
+        }
 
-    /* كارت شام كاش المخصص */
-    .sham-cash-card {
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 15px;
-      border: 2px solid #27ae60;
-      background-color: #f0fff4;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            border: none;
+            color: #000;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
 
-    .sham-cash-card i {
-      font-size: 35px;
-      color: #27ae60;
-    }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-success { background: var(--success); color: #fff; }
 
-    .sham-cash-card .info h4 {
-      font-size: 16px;
-      color: #2c3e50;
-    }
+        .auth-toggle {
+            text-align: center;
+            margin-top: 15px;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 14px;
+        }
 
-    .sham-cash-card .info p {
-      font-size: 12px;
-      color: #666;
-    }
+        /* App Header */
+        header {
+            background: var(--card-bg);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    /* نموذج طلب السحب */
-    .form-group {
-      margin-bottom: 15px;
-    }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      margin-bottom: 6px;
-      color: #444;
-      font-weight: bold;
-    }
+        .logo {
+            width: 35px;
+            height: 35px;
+            background: var(--primary-color);
+            color: #000;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 18px;
+        }
 
-    .form-group input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
+        .notifications-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 20px;
+            cursor: pointer;
+            position: relative;
+        }
 
-    .form-group input:focus {
-      border-color: #27ae60;
-    }
+        /* Marquee ticker */
+        .ticker {
+            background: #181a20;
+            padding: 8px 15px;
+            overflow: hidden;
+            white-space: nowrap;
+            color: var(--primary-color);
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-    .btn-submit {
-      width: 100%;
-      background-color: #27ae60;
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+        .ticker-content {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+        }
 
-    .btn-submit:hover {
-      background-color: #219150;
-    }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
 
-    /* الشريط السفلي Bottom Navigation */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 65px;
-      background-color: #ffffff;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
-      border-top-left-radius: 15px;
-      border-top-right-radius: 15px;
-      z-index: 1000;
-    }
+        /* Container & Pages */
+        .container {
+            padding: 15px;
+            max-width: 600px;
+            margin: auto;
+        }
 
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #7f8c8d;
-      text-decoration: none;
-      font-size: 12px;
-      width: 20%;
-      height: 100%;
-      transition: all 0.2s ease-in-out;
-      cursor: pointer;
-    }
+        .page { display: none; }
+        .page.active { display: block; }
 
-    .nav-item i {
-      font-size: 20px;
-      margin-bottom: 4px;
-    }
+        .balance-card {
+            background: linear-gradient(135deg, #2b2f36, #1e2026);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
 
-    .nav-item.active {
-      color: #27ae60;
-      font-weight: bold;
-    }
+        .balance-grid {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
 
-    .nav-item.active i {
-      transform: translateY(-2px);
-    }
-  </style>
+        .balance-item {
+            text-align: center;
+        }
+
+        .balance-item span {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .balance-item h3 {
+            color: var(--primary-color);
+            margin-top: 5px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* VIP Cards */
+        .vip-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .vip-info h4 { color: var(--primary-color); }
+        .vip-info p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+        /* Navigation Bar */
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid var(--border-color);
+            z-index: 100;
+        }
+
+        .nav-item {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 11px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px; left: 10px;
+            color: #fff; font-size: 20px; cursor: pointer;
+        }
+
+        .note {
+            font-size: 12px;
+            color: var(--danger);
+            margin-top: 5px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        .table th, .table td {
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- 1. الصفحة الرئيسية -->
-  <div id="home-page" class="page active">
-    <div class="balance-card">
-      <h3>رصيد الحساب الحالي</h3>
-      <div class="amount">$0.00</div>
-    </div>
-    <h3 class="section-title">مرحباً بك في منصة LKPO</h3>
-    <p style="color: #666; line-height: 1.6;">يمكنك متابعة حسابك وسحب أرباحك مباشرة عبر شبكة شام كاش المعتمدة.</p>
-  </div>
-
-  <!-- 2. صفحة سحب شام كاش فقط (المضافة بجانب الرئيسية) -->
-  <div id="withdraw-page" class="page">
-    <h3 class="section-title">سحب عبر شام كاش (Sham Cash)</h3>
-    
-    <!-- بطاقة تأكيد طريقة شام كاش -->
-    <div class="sham-cash-card">
-      <i class="fa-solid fa-wallet"></i>
-      <div class="info">
-        <h4>شام كاش / Sham Cash</h4>
-        <p>طريقة السحب المعتمدة والوحيدة المتاحة في الحساب</p>
-      </div>
-    </div>
-
-    <!-- نموذج إدخال بيانات السحب -->
-    <form onsubmit="handleWithdraw(event)">
-      <div class="form-group">
-        <label>المبلغ المراد سحبه ($)</label>
-        <input type="number" placeholder="أدخل المبلغ المطلوب" min="10" required>
-      </div>
-
-      <div class="form-group">
-        <label>عنوان أو رقم حساب شام كاش</label>
-        <input type="text" placeholder="أدخل رقم/عنوان محفظة شام كاش الخاصة بك" required>
-      </div>
-
-      <div class="form-group">
-        <label>اسم صاحب الحساب بالكامل</label>
-        <input type="text" placeholder="اكتب اسمك الثلاثي في شام كاش" required>
-      </div>
-
-      <button type="submit" class="btn-submit">تأكيد طلب السحب</button>
-    </form>
-  </div>
-
-  <!-- 3. صفحة VIP -->
-  <div id="vip-page" class="page">
-    <h3 class="section-title">مستويات VIP</h3>
-    <p style="color: #666;">فتح المستوى VIP2 يتطلب إجراء عملية إيداع وتأكيدها أولاً.</p>
-  </div>
-
-  <!-- 4. صفحة حسابي -->
-  <div id="profile-page" class="page">
-    <h3 class="section-title">الملف الشخصي</h3>
-    <p style="color: #666;">تفاصيل وإعدادات حسابك في LKPO.</p>
-  </div>
-
-
-  <!-- ===== الشريط السفلي للنظام (Bottom Navigation Bar) ===== -->
-  <nav class="bottom-nav">
-    
-    <!-- 1. الرئيسية -->
-    <div class="nav-item active" onclick="switchTab('home-page', this)">
-      <i class="fa-solid fa-house"></i>
-      <span>الرئيسية</span>
+    <!-- Auth View -->
+    <div id="authView" class="auth-container">
+        <h2 id="authTitle">تسجيل الدخول - LKPO</h2>
+        <form id="authForm">
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="authEmail" required>
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="authPassword" required>
+            </div>
+            <div class="form-group" id="confirmPassGroup" style="display:none;">
+                <label>تأكيد كلمة المرور</label>
+                <input type="password" id="authConfirmPassword">
+            </div>
+            <div class="form-group" id="inviteCodeGroup" style="display:none;">
+                <label>كود الدعوة</label>
+                <input type="text" id="authInviteCode">
+            </div>
+            <button type="submit" class="btn" id="authSubmitBtn">دخول</button>
+        </form>
+        <div class="auth-toggle" id="authToggle" onclick="toggleAuthMode()">ليس لديك حساب؟ سجل الآن</div>
     </div>
 
-    <!-- 2. زر سحب شام كاش بجانب الرئيسية مباشرة -->
-    <div class="nav-item" onclick="switchTab('withdraw-page', this)">
-      <i class="fa-solid fa-wallet"></i>
-      <span>شام كاش</span>
+    <!-- Main Application -->
+    <div id="appView" style="display:none;">
+        <header>
+            <div class="brand">
+                <div class="logo">LK</div>
+                <span style="font-weight: bold;">LKPO</span>
+            </div>
+            <button class="notifications-btn" onclick="openModal('notificationsModal')">🔔</button>
+        </header>
+
+        <div class="ticker">
+            <div class="ticker-content" id="withdrawTicker">
+                منبر السحوبات: مستخدم (usr...42) سحب 50$ USDT \vert{} مستخدم (usr...91) سحب 12,000 ل.س \vert{} مستخدم (usr...11) سحب 100$ USDT
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Home Page -->
+            <div id="pageHome" class="page active">
+                <div class="balance-card">
+                    <span>رصيد الحساب الإجمالي</span>
+                    <div class="balance-grid">
+                        <div class="balance-item">
+                            <span>بالدولار</span>
+                            <h3 id="userUsdtBalance">0.00 $</h3>
+                        </div>
+                        <div class="balance-item">
+                            <span>بالليرة السورية</span>
+                            <h3 id="userSypBalance">0 ل.س</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions-grid">
+                    <div class="action-btn" onclick="openModal('depositUsdtModal')">📥 إيداع رقمي (USDT)</div>
+                    <div class="action-btn" onclick="openModal('withdrawUsdtModal')">📤 سحب رقمي (USDT)</div>
+                    <div class="action-btn" onclick="openModal('depositShamModal')">💳 إيداع شام كاش</div>
+                    <div class="action-btn" onclick="openModal('withdrawShamModal')">💳 سحب شام كاش</div>
+                </div>
+
+                <div class="balance-card">
+                    <h4 style="margin-bottom:10px;">أسعار العملات المباشرة</h4>
+                    <div style="font-size:13px; display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <span>BTC/USDT</span> <span style="color:var(--success)">$94,500.00</span>
+                    </div>
+                    <div style="font-size:13px; display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <span>ETH/USDT</span> <span style="color:var(--success)">$3,450.00</span>
+                    </div>
+                    <div style="font-size:13px; display:flex; justify-content:space-between;">
+                        <span>USDT/SYP</span> <span>15,000 ل.س</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investment Page -->
+            <div id="pageInvest" class="page">
+                <h3 style="margin-bottom:15px; color:var(--primary-color)">الاستثمار والمهام اليومية</h3>
+                <div class="vip-card">
+                    <div class="vip-info">
+                        <h4>مهمة الليرة السورية اليومية</h4>
+                        <p>تنفذ مرة كل 24 ساعة</p>
+                    </div>
+                    <button class="btn" style="width:auto; padding:8px 15px;" onclick="claimTask('SYP')">تنفيذ (500 ل.س)</button>
+                </div>
+                <div class="vip-card">
+                    <div class="vip-info">
+                        <h4>مهمة الدولار اليومية</h4>
+                        <p>تنفذ مرة كل 24 ساعة</p>
+                    </div>
+                    <button class="btn" style="width:auto; padding:8px 15px;" onclick="claimTask('USDT')">تنفيذ (1.00 $)</button>
+                </div>
+            </div>
+
+            <!-- VIP SYP Page -->
+            <div id="pageVipSyp" class="page">
+                <h3 style="margin-bottom:15px; color:var(--primary-color)">مستويات VIP - الليرة السورية</h3>
+                <div id="vipSypList"></div>
+            </div>
+
+            <!-- VIP USDT Page -->
+            <div id="pageVipUsdt" class="page">
+                <h3 style="margin-bottom:15px; color:var(--primary-color)">مستويات VIP - الدولار</h3>
+                <div id="vipUsdtList"></div>
+            </div>
+
+            <!-- Team Page -->
+            <div id="pageTeam" class="page">
+                <h3 style="margin-bottom:15px; color:var(--primary-color)">فريق العمل</h3>
+                <div class="balance-card">
+                    <p style="font-size:13px;">رابط الدعوة الخاص بك:</p>
+                    <input type="text" id="inviteLink" readonly style="width:100%; padding:8px; margin:5px 0; background:#000; color:#fff; border:none;">
+                    <p style="font-size:13px;">كود الدعوة: <b id="userInviteCodeDisplay" style="color:var(--primary-color)"></b></p>
+                    <p style="font-size:12px; color:var(--text-muted); margin-top:5px;">نسبة ربح الدعوات: 10% من أرباح الفريق</p>
+                </div>
+                <h4>سجل المدعوين</h4>
+                <table class="table">
+                    <thead>
+                        <tr><th>البريد</th><th>تاريخ الانضمام</th></tr>
+                    </thead>
+                    <tbody id="invitedList">
+                        <tr><td colspan="2">لا يوجد مدعوين حالياً</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Account Page -->
+            <div id="pageAccount" class="page">
+                <h3 style="margin-bottom:15px; color:var(--primary-color)">حسابي</h3>
+                <div class="balance-card">
+                    <p><strong>البريد الإلكتروني:</strong> <span id="accEmail"></span></p>
+                    <p style="margin-top:10px;"><strong>رصيد الليرة السورية:</strong> <span id="accSyp"></span></p>
+                    <p style="margin-top:10px;"><strong>رصيد الدولار:</strong> <span id="accUsdt"></span></p>
+                </div>
+                
+                <div id="adminPanelSection" style="display:none;" class="balance-card">
+                    <h4 style="color:var(--primary-color); margin-bottom:10px;">لوحة الأدمن - إدارة الطلبات</h4>
+                    <table class="table">
+                        <thead>
+                            <tr><th>النوع</th><th>البريد</th><th>الكمية</th><th>المحفظة/الشبكة</th><th>إجراء</th></tr>
+                        </thead>
+                        <tbody id="adminRequestsList"></tbody>
+                    </table>
+                </div>
+
+                <button class="btn btn-danger" onclick="logout()">تسجيل الخروج</button>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav>
+            <div class="nav-item active" onclick="switchPage('pageHome', this)">الرئيسية</div>
+            <div class="nav-item" onclick="switchPage('pageInvest', this)">الاستثمار</div>
+            <div class="nav-item" onclick="switchPage('pageVipSyp', this)">VIP ل.س</div>
+            <div class="nav-item" onclick="switchPage('pageVipUsdt', this)">VIP $</div>
+            <div class="nav-item" onclick="switchPage('pageTeam', this)">الفريق</div>
+            <div class="nav-item" onclick="switchPage('pageAccount', this)">حسابي</div>
+        </nav>
     </div>
 
-    <!-- 3. زر VIP -->
-    <div class="nav-item" onclick="switchTab('vip-page', this)">
-      <i class="fa-solid fa-crown"></i>
-      <span>VIP</span>
+    <!-- Modals -->
+    <!-- Notifications Modal -->
+    <div id="notificationsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('notificationsModal')">&times;</span>
+            <h4>إشعارات النظام</h4>
+            <div style="margin-top:15px; font-size:13px;" id="notificationsContent">
+                <p>• مرحباً بك في منصة LKPO.</p>
+                <p>• التحديث الجديد: أضيفت شبكات شام كاش وسحوبات الليرة الحديثة.</p>
+            </div>
+        </div>
     </div>
 
-    <!-- 4. زر حسابي -->
-    <div class="nav-item" onclick="switchTab('profile-page', this)">
-      <i class="fa-solid fa-user"></i>
-      <span>حسابي</span>
+    <!-- Deposit USDT Modal -->
+    <div id="depositUsdtModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('depositUsdtModal')">&times;</span>
+            <h4>إيداع رقمي (USDT)</h4>
+            <div class="form-group" style="margin-top:10px;">
+                <label>شبكة الإيداع</label>
+                <select id="depUsdtNet"><option>TRC20</option><option>ERC20</option><option>BEP20</option></select>
+            </div>
+            <div class="form-group">
+                <label>كمية الإيداع ($)</label>
+                <input type="number" id="depUsdtAmount" placeholder="أدخل المبلغ">
+            </div>
+            <div class="note">ملاحظة: أقل إيداع هو 1$</div>
+            <button class="btn" onclick="submitRequest('إيداع USDT')">إرسال طلب الإيداع</button>
+        </div>
     </div>
 
-  </nav>
+    <!-- Withdraw USDT Modal -->
+    <div id="withdrawUsdtModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('withdrawUsdtModal')">&times;</span>
+            <h4>سحب رقمي (USDT)</h4>
+            <div class="form-group" style="margin-top:10px;">
+                <label>عنوان المحفظة</label>
+                <input type="text" id="witUsdtWallet" placeholder="أدخل عنوان محفظتك">
+            </div>
+            <div class="form-group">
+                <label>اختيار الشبكة</label>
+                <select id="witUsdtNet"><option>TRC20</option><option>ERC20</option><option>BEP20</option></select>
+            </div>
+            <div class="form-group">
+                <label>كمية السحب ($)</label>
+                <input type="number" id="witUsdtAmount" placeholder="أدخل المبلغ">
+            </div>
+            <div class="note">ملاحظة: أقل سحب هو 1$</div>
+            <button class="btn" onclick="submitRequest('سحب USDT')">إرسال طلب السحب</button>
+        </div>
+    </div>
 
-  <!-- JavaScript للتنقل والتحكم -->
-  <script>
-    function switchTab(pageId, element) {
-      const pages = document.querySelectorAll('.page');
-      pages.forEach(page => page.classList.remove('active'));
+    <!-- Deposit Sham Modal -->
+    <div id="depositShamModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('depositShamModal')">&times;</span>
+            <h4>إيداع شام كاش</h4>
+            <div class="form-group" style="margin-top:10px;">
+                <label>كمية الإيداع (ل.س)</label>
+                <input type="number" id="depShamAmount" placeholder="أدخل المبلغ بالعملة الجديدة">
+            </div>
+            <div class="note">ملاحظة: أقل إيداع هو 400 ل.س بالعملة الجديدة</div>
+            <button class="btn" onclick="submitRequest('إيداع شام كاش')">إرسال طلب الإيداع</button>
+        </div>
+    </div>
 
-      const navItems = document.querySelectorAll('.nav-item');
-      navItems.forEach(item => item.classList.remove('active'));
+    <!-- Withdraw Sham Modal -->
+    <div id="withdrawShamModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('withdrawShamModal')">&times;</span>
+            <h4>سحب شام كاش</h4>
+            <div class="form-group" style="margin-top:10px;">
+                <label>عنوان المحفظة / الرقم</label>
+                <input type="text" id="witShamWallet" placeholder="عنوان حساب شام كاش">
+            </div>
+            <div class="form-group">
+                <label>كمية السحب (ل.س)</label>
+                <input type="number" id="witShamAmount" placeholder="أدخل المبلغ">
+            </div>
+            <div class="note">ملاحظة: أقل سحب هو 100 ل.س</div>
+            <button class="btn" onclick="submitRequest('سحب شام كاش')">إرسال طلب السحب</button>
+        </div>
+    </div>
 
-      document.getElementById(pageId).classList.add('active');
-      element.classList.add('active');
-    }
+    <script>
+        const ADMIN_EMAIL = "nnnnaaatttnanooo@gmail.com";
+        let isSignUp = false;
+        let currentUser = null;
 
-    function handleWithdraw(event) {
-      event.preventDefault();
-      alert("تم إرسال طلب السحب بنجاح عبر شام كاش!\nسيتم مراجعة الطلب وتحويل المبلغ بعد التأكيد.");
-    }
-  </script>
+        // Initialize Local Storage DB
+        if(!localStorage.getItem('usersDB')) localStorage.setItem('usersDB', JSON.stringify([]));
+        if(!localStorage.getItem('requestsDB')) localStorage.setItem('requestsDB', JSON.stringify([]));
+
+        window.onload = function() {
+            const savedSession = localStorage.getItem('activeUser');
+            if(savedSession) {
+                currentUser = JSON.parse(savedSession);
+                loadApp();
+            }
+        };
+
+        function toggleAuthMode() {
+            isSignUp = !isSignUp;
+            document.getElementById('authTitle').innerText = isSignUp ? "تسجيل حساب جديد - LKPO" : "تسجيل الدخول - LKPO";
+            document.getElementById('confirmPassGroup').style.display = isSignUp ? "block" : "none";
+            document.getElementById('inviteCodeGroup').style.display = isSignUp ? "block" : "none";
+            document.getElementById('authSubmitBtn').innerText = isSignUp ? "إنشاء حساب" : "دخول";
+            document.getElementById('authToggle').innerText = isSignUp ? "لديك حساب بالفعل؟ سجل دخول" : "ليس لديك حساب؟ سجل الآن";
+        }
+
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            let users = JSON.parse(localStorage.getItem('usersDB'));
+
+            if(isSignUp) {
+                const confirmPass = document.getElementById('authConfirmPassword').value;
+                if(password !== confirmPass) return alert("كلمات المرور غير متطابقة");
+                if(users.find(u => u.email === email)) return alert("البريد الإلكتروني مسجل بالفعل");
+
+                const newUser = {
+                    email: email,
+                    password: password,
+                    sypBalance: 0,
+                    usdtBalance: 0,
+                    inviteCode: 'LK' + Math.floor(1000 + Math.random() * 9000),
+                    lastTask: 0
+                };
+                users.push(newUser);
+                localStorage.setItem('usersDB', JSON.stringify(users));
+                currentUser = newUser;
+            } else {
+                const user = users.find(u => u.email === email && u.password === password);
+                if(!user) return alert("البريد أو كلمة المرور غير صحيحة");
+                currentUser = user;
+            }
+
+            localStorage.setItem('activeUser', JSON.stringify(currentUser));
+            loadApp();
+        });
+
+        function loadApp() {
+            document.getElementById('authView').style.display = 'none';
+            document.getElementById('appView').style.display = 'block';
+            updateUI();
+            buildVipLists();
+        }
+
+        function updateUI() {
+            // Refetch current user from DB
+            let users = JSON.parse(localStorage.getItem('usersDB'));
+            currentUser = users.find(u => u.email === currentUser.email) || currentUser;
+
+            document.getElementById('userUsdtBalance').innerText = currentUser.usdtBalance.toFixed(2) + " $";
+            document.getElementById('userSypBalance').innerText = currentUser.sypBalance + " ل.س";
+            document.getElementById('accEmail').innerText = currentUser.email;
+            document.getElementById('accSyp').innerText = currentUser.sypBalance + " ل.س";
+            document.getElementById('accUsdt').innerText = currentUser.usdtBalance.toFixed(2) + " $";
+            document.getElementById('userInviteCodeDisplay').innerText = currentUser.inviteCode;
+            document.getElementById('inviteLink').value = window.location.origin + "?ref=" + currentUser.inviteCode;
+
+            if(currentUser.email === ADMIN_EMAIL) {
+                document.getElementById('adminPanelSection').style.display = 'block';
+                loadAdminRequests();
+            }
+        }
+
+        function switchPage(pageId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            if(el) el.classList.add('active');
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function submitRequest(type) {
+            let req = { id: Date.now(), email: currentUser.email, type: type, status: 'قيد الانتظار' };
+            
+            if(type === 'إيداع USDT') {
+                let amt = parseFloat(document.getElementById('depUsdtAmount').value);
+                if(amt < 1) return alert("أقل إيداع هو 1$");
+                req.amount = amt + " $"; req.details = "شبكة: " + document.getElementById('depUsdtNet').value;
+            } else if(type === 'سحب USDT') {
+                let amt = parseFloat(document.getElementById('witUsdtAmount').value);
+                if(amt < 1) return alert("أقل سحب هو 1$");
+                if(currentUser.usdtBalance < amt) return alert("رصيدك غير كافي");
+                req.amount = amt + " $"; req.details = "عنوان: " + document.getElementById('witUsdtWallet').value + " (" + document.getElementById('witUsdtNet').value + ")";
+            } else if(type === 'إيداع شام كاش') {
+                let amt = parseFloat(document.getElementById('depShamAmount').value);
+                if(amt < 400) return alert("أقل إيداع 400 ل.س");
+                req.amount = amt + " ل.س"; req.details = "شام كاش";
+            } else if(type === 'سحب شام كاش') {
+                let amt = parseFloat(document.getElementById('witShamAmount').value);
+                if(amt < 100) return alert("أقل سحب 100 ل.س");
+                if(currentUser.sypBalance < amt) return alert("رصيدك غير كافي");
+                req.amount = amt + " ل.س"; req.details = "محفظة: " + document.getElementById('witShamWallet').value;
+            }
+
+            let reqs = JSON.parse(localStorage.getItem('requestsDB'));
+            reqs.push(req);
+            localStorage.setItem('requestsDB', JSON.stringify(reqs));
+            alert("تم إرسال الطلب بنجاح إلى الأدمن للمراجعة.");
+            closeModal('depositUsdtModal'); closeModal('withdrawUsdtModal');
+            closeModal('depositShamModal'); closeModal('withdrawShamModal');
+        }
+
+        function claimTask(currency) {
+            let now = Date.now();
+            if(now - currentUser.lastTask < 86400000) {
+                return alert("يمكنك تنفيذ المهمة مرة واحدة كل 24 ساعة فقط!");
+            }
+            let users = JSON.parse(localStorage.getItem('usersDB'));
+            let idx = users.findIndex(u => u.email === currentUser.email);
+            
+            if(currency === 'SYP') users[idx].sypBalance += 500;
+            else users[idx].usdtBalance += 1.0;
+            
+            users[idx].lastTask = now;
+            localStorage.setItem('usersDB', JSON.stringify(users));
+            alert("تم تنفيذ المهمة وإضافة الأرباح لرصيدك!");
+            updateUI();
+        }
+
+        function buildVipLists() {
+            // Build SYP VIPs
+            let sypContainer = document.getElementById('vipSypList');
+            sypContainer.innerHTML = '';
+            let sypPrices = [380, 1000, 3000, 7000, 13000];
+            sypPrices.forEach((price, idx) => {
+                let ratio = 20 + (idx * 2.5);
+                sypContainer.innerHTML += `
+                    <div class="vip-card">
+                        <div class="vip-info">
+                            <h4>VIP ${idx+1} (ل.س)</h4>
+                            <p>سعر الاشتراك: ${price} ل.س | نسبة الربح: ${ratio}%</p>
+                        </div>
+                        <button class="btn" style="width:auto;" onclick="buyVip('SYP', ${price})">اشتراك</button>
+                    </div>`;
+            });
+
+            // Build USDT VIPs
+            let usdtContainer = document.getElementById('vipUsdtList');
+            usdtContainer.innerHTML = '';
+            let usdtPrices = [5, 25, 100, 300, 800];
+            usdtPrices.forEach((price, idx) => {
+                let ratio = 20 + (idx * 2.5);
+                usdtContainer.innerHTML += `
+                    <div class="vip-card">
+                        <div class="vip-info">
+                            <h4>VIP ${idx+1} ($)</h4>
+                            <p>سعر الاشتراك: ${price}$ | نسبة الربح: ${ratio}%</p>
+                        </div>
+                        <button class="btn" style="width:auto;" onclick="buyVip('USDT', ${price})">اشتراك</button>
+                    </div>`;
+            });
+        }
+
+        function buyVip(type, price) {
+            if(type === 'SYP' && currentUser.sypBalance < price) return alert("رصيد الليرة السورية غير كافٍ");
+            if(type === 'USDT' && currentUser.usdtBalance < price) return alert("رصيد الدولار غير كافٍ");
+            
+            let users = JSON.parse(localStorage.getItem('usersDB'));
+            let idx = users.findIndex(u => u.email === currentUser.email);
+            if(type === 'SYP') users[idx].sypBalance -= price;
+            else users[idx].usdtBalance -= price;
+
+            localStorage.setItem('usersDB', JSON.stringify(users));
+            alert("تم الاشتراك في المستوى بنجاح!");
+            updateUI();
+        }
+
+        function loadAdminRequests() {
+            let reqs = JSON.parse(localStorage.getItem('requestsDB'));
+            let container = document.getElementById('adminRequestsList');
+            container.innerHTML = '';
+            reqs.forEach(r => {
+                if(r.status === 'قيد الانتظار') {
+                    container.innerHTML += `
+                        <tr>
+                            <td>${r.type}</td>
+                            <td>${r.email}</td>
+                            <td>${r.amount}</td>
+                            <td>${r.details}</td>
+                            <td>
+                                <button class="btn btn-success" style="padding:4px; font-size:10px;" onclick="handleAdminReq(${r.id}, true)">قبول</button>
+                                <button class="btn btn-danger" style="padding:4px; font-size:10px;" onclick="handleAdminReq(${r.id}, false)">رفض</button>
+                            </td>
+                        </tr>`;
+                }
+            });
+        }
+
+        function handleAdminReq(reqId, accept) {
+            let reqs = JSON.parse(localStorage.getItem('requestsDB'));
+            let users = JSON.parse(localStorage.getItem('usersDB'));
+            let req = reqs.find(r => r.id === reqId);
+            let userIdx = users.findIndex(u => u.email === req.email);
+
+            if(accept && userIdx !== -1) {
+                let val = parseFloat(req.amount);
+                if(req.type.includes('إيداع USDT')) users[userIdx].usdtBalance += val;
+                else if(req.type.includes('سحب USDT')) users[userIdx].usdtBalance -= val;
+                else if(req.type.includes('إيداع شام')) users[userIdx].sypBalance += val;
+                else if(req.type.includes('سحب شام')) users[userIdx].sypBalance -= val;
+            }
+            req.status = accept ? 'تم القبول' : 'مرفوض';
+            localStorage.setItem('requestsDB', JSON.stringify(reqs));
+            localStorage.setItem('usersDB', JSON.stringify(users));
+            loadAdminRequests();
+            updateUI();
+        }
+
+        function logout() {
+            localStorage.removeItem('activeUser');
+            location.reload();
+        }
+    </script>
 </body>
 </html>
