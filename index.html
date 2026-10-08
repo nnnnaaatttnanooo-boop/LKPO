@@ -29,7 +29,6 @@
             padding-bottom: 70px;
         }
 
-        /* Auth Container */
         .auth-container {
             max-width: 400px;
             margin: 50px auto;
@@ -89,7 +88,6 @@
             font-size: 14px;
         }
 
-        /* App Header */
         header {
             background: var(--card-bg);
             padding: 15px 20px;
@@ -127,10 +125,8 @@
             color: var(--text-color);
             font-size: 20px;
             cursor: pointer;
-            position: relative;
         }
 
-        /* Marquee ticker */
         .ticker {
             background: #181a20;
             padding: 8px 15px;
@@ -151,7 +147,6 @@
             100% { transform: translateX(-100%); }
         }
 
-        /* Container & Pages */
         .container {
             padding: 15px;
             max-width: 600px;
@@ -175,20 +170,9 @@
             margin-top: 10px;
         }
 
-        .balance-item {
-            text-align: center;
-        }
-
-        .balance-item span {
-            display: block;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .balance-item h3 {
-            color: var(--primary-color);
-            margin-top: 5px;
-        }
+        .balance-item { text-align: center; }
+        .balance-item span { display: block; font-size: 12px; color: var(--text-muted); }
+        .balance-item h3 { color: var(--primary-color); margin-top: 5px; }
 
         .actions-grid {
             display: grid;
@@ -208,7 +192,29 @@
             font-size: 14px;
         }
 
-        /* VIP Cards */
+        .trust-banner {
+            background: linear-gradient(135deg, #1e232a, #16181d);
+            border: 1px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .trust-banner h4 {
+            color: var(--primary-color);
+            font-size: 15px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .trust-banner p {
+            font-size: 12px;
+            color: #c1c7d0;
+            line-height: 1.6;
+        }
+
         .vip-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -223,12 +229,9 @@
         .vip-info h4 { color: var(--primary-color); }
         .vip-info p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
 
-        /* Navigation Bar */
         nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             background: var(--card-bg);
             display: flex;
             justify-content: space-around;
@@ -245,11 +248,8 @@
             cursor: pointer;
         }
 
-        .nav-item.active {
-            color: var(--primary-color);
-        }
+        .nav-item.active { color: var(--primary-color); }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -281,12 +281,37 @@
             margin-top: 5px;
         }
 
+        .address-box {
+            background: #121214;
+            border: 1px dashed var(--primary-color);
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            word-break: break-all;
+            font-size: 12px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: var(--primary-color);
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
         .table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
             font-size: 12px;
         }
+
         .table th, .table td {
             border: 1px solid var(--border-color);
             padding: 8px;
@@ -370,8 +395,16 @@
                         <span>ETH/USDT</span> <span style="color:var(--success)">$3,450.00</span>
                     </div>
                     <div style="font-size:13px; display:flex; justify-content:space-between;">
-                        <span>USDT/SYP</span> <span>15,000 ل.س</span>
+                        <span>USDT/SYP</span> <span style="color:var(--primary-color)">135 ل.س</span>
                     </div>
+                </div>
+
+                <!-- Trust Announcement Banner -->
+                <div class="trust-banner">
+                    <h4>🛡️ المنصة الموثوقة الأولى LKPO</h4>
+                    <p>
+                        نحن في <strong>LKPO</strong> نضمن لك بيئة استثمارية آمنة 100% مع نظام حماية مشفر وإيداعات وسحوبات فورية ومباشرة. أموالك وأرباحك محصنة بأعلى معايير الأمان العالمية، مع دعم فني متواصل لتأمين عملياتك المالية بسرعة وسلاسة. استثمر بثقة وابدأ في تحقيق أرباحك اليوم!
+                    </p>
                 </div>
             </div>
 
@@ -461,7 +494,6 @@
     </div>
 
     <!-- Modals -->
-    <!-- Notifications Modal -->
     <div id="notificationsModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('notificationsModal')">&times;</span>
@@ -473,18 +505,29 @@
         </div>
     </div>
 
-    <!-- Deposit USDT Modal -->
+    <!-- Deposit USDT Modal with Address Copy -->
     <div id="depositUsdtModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('depositUsdtModal')">&times;</span>
             <h4>إيداع رقمي (USDT)</h4>
             <div class="form-group" style="margin-top:10px;">
-                <label>شبكة الإيداع</label>
-                <select id="depUsdtNet"><option>TRC20</option><option>ERC20</option><option>BEP20</option></select>
+                <label>اختر شبكة الإيداع</label>
+                <select id="depUsdtNet" onchange="updateCryptoAddress()">
+                    <option value="TRC20">TRC20</option>
+                    <option value="ERC20">ERC20</option>
+                    <option value="BEP20">BEP20</option>
+                </select>
             </div>
+
+            <label style="font-size:12px; color:var(--text-muted);">عنوان محفظة الإيداع الخاصة بالمنصة:</label>
+            <div class="address-box">
+                <span id="cryptoAddressText">TY3u82kXz9L...TRC20...Address</span>
+                <button class="copy-btn" onclick="copyText('cryptoAddressText')">نسخ</button>
+            </div>
+
             <div class="form-group">
                 <label>كمية الإيداع ($)</label>
-                <input type="number" id="depUsdtAmount" placeholder="أدخل المبلغ">
+                <input type="number" id="depUsdtAmount" placeholder="أدخل المبلغ بعد التحويل">
             </div>
             <div class="note">ملاحظة: أقل إيداع هو 1$</div>
             <button class="btn" onclick="submitRequest('إيداع USDT')">إرسال طلب الإيداع</button>
@@ -513,12 +556,18 @@
         </div>
     </div>
 
-    <!-- Deposit Sham Modal -->
+    <!-- Deposit Sham Modal with Address Copy -->
     <div id="depositShamModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('depositShamModal')">&times;</span>
             <h4>إيداع شام كاش</h4>
-            <div class="form-group" style="margin-top:10px;">
+            <label style="font-size:12px; color:var(--text-muted); margin-top:10px; display:block;">عنوان/كود حساب شام كاش للمنصة:</label>
+            <div class="address-box">
+                <span id="shamAddressText">SHAM-99882241-LKPO</span>
+                <button class="copy-btn" onclick="copyText('shamAddressText')">نسخ</button>
+            </div>
+
+            <div class="form-group">
                 <label>كمية الإيداع (ل.س)</label>
                 <input type="number" id="depShamAmount" placeholder="أدخل المبلغ بالعملة الجديدة">
             </div>
@@ -550,7 +599,12 @@
         let isSignUp = false;
         let currentUser = null;
 
-        // Initialize Local Storage DB
+        const cryptoAddresses = {
+            'TRC20': 'T9x2K1mP87qWLKPO888TRC20AddressXYZ',
+            'ERC20': '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
+            'BEP20': '0x3f5CE5FBFe3E9af3971dD833D26bA9b5C936f0bE'
+        };
+
         if(!localStorage.getItem('usersDB')) localStorage.setItem('usersDB', JSON.stringify([]));
         if(!localStorage.getItem('requestsDB')) localStorage.setItem('requestsDB', JSON.stringify([]));
 
@@ -560,7 +614,20 @@
                 currentUser = JSON.parse(savedSession);
                 loadApp();
             }
+            updateCryptoAddress();
         };
+
+        function updateCryptoAddress() {
+            let net = document.getElementById('depUsdtNet').value;
+            document.getElementById('cryptoAddressText').innerText = cryptoAddresses[net] || cryptoAddresses['TRC20'];
+        }
+
+        function copyText(elementId) {
+            let text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("تم نسخ العنوان بنجاح!");
+            });
+        }
 
         function toggleAuthMode() {
             isSignUp = !isSignUp;
@@ -611,7 +678,6 @@
         }
 
         function updateUI() {
-            // Refetch current user from DB
             let users = JSON.parse(localStorage.getItem('usersDB'));
             currentUser = users.find(u => u.email === currentUser.email) || currentUser;
 
@@ -688,7 +754,6 @@
         }
 
         function buildVipLists() {
-            // Build SYP VIPs
             let sypContainer = document.getElementById('vipSypList');
             sypContainer.innerHTML = '';
             let sypPrices = [380, 1000, 3000, 7000, 13000];
@@ -704,7 +769,6 @@
                     </div>`;
             });
 
-            // Build USDT VIPs
             let usdtContainer = document.getElementById('vipUsdtList');
             usdtContainer.innerHTML = '';
             let usdtPrices = [5, 25, 100, 300, 800];
