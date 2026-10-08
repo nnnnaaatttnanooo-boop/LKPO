@@ -187,14 +187,21 @@
         }
 
         .balance-grid {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
             margin-top: 10px;
         }
 
-        .balance-item { text-align: center; }
-        .balance-item span { display: block; font-size: 12px; color: var(--text-muted); }
-        .balance-item h3 { color: var(--primary-color); margin-top: 5px; }
+        .balance-item {
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .balance-item span { display: block; font-size: 11px; color: var(--text-muted); }
+        .balance-item h3 { color: var(--primary-color); margin-top: 5px; font-size: 15px; }
 
         .actions-grid {
             display: grid;
@@ -222,17 +229,8 @@
             margin-top: 15px;
         }
 
-        .trust-banner h4 {
-            color: var(--primary-color);
-            font-size: 15px;
-            margin-bottom: 8px;
-        }
-
-        .trust-banner p {
-            font-size: 12px;
-            color: #c1c7d0;
-            line-height: 1.6;
-        }
+        .trust-banner h4 { color: var(--primary-color); font-size: 15px; margin-bottom: 8px; }
+        .trust-banner p { font-size: 12px; color: #c1c7d0; line-height: 1.6; }
 
         .vip-card {
             background: var(--card-bg);
@@ -264,7 +262,7 @@
             background: var(--card-bg);
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
+            padding: 8px 0;
             border-top: 1px solid var(--border-color);
             z-index: 100;
         }
@@ -272,7 +270,7 @@
         .nav-item {
             color: var(--text-muted);
             text-decoration: none;
-            font-size: 11px;
+            font-size: 10px;
             text-align: center;
             cursor: pointer;
         }
@@ -310,6 +308,20 @@
             margin-top: 5px;
         }
 
+        .withdraw-info-box {
+            background: rgba(14, 203, 129, 0.1);
+            border: 1px solid var(--success);
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .withdraw-info-box h3 {
+            color: var(--success);
+            margin-top: 4px;
+        }
+
         .address-box {
             background: #121214;
             border: 1px dashed var(--primary-color);
@@ -338,7 +350,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .table th, .table td {
@@ -346,6 +358,11 @@
             padding: 8px;
             text-align: center;
         }
+
+        .type-deposit { color: var(--success); font-weight: bold; }
+        .type-withdraw { color: var(--danger); font-weight: bold; }
+        .type-task { color: var(--primary-color); font-weight: bold; }
+        .type-vip { color: #0088cc; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -392,7 +409,7 @@
 
         <div class="ticker">
             <div class="ticker-content" id="withdrawTicker">
-                منبر السحوبات: مستخدم (usr...42) سحب 50$ USDT | مستخدم (usr...91) سحب 12,000 ل.س | مستخدم (usr...11) سحب 100$ USDT
+                منبر السحوبات: مستخدم (usr...42) سحب 50$ USDT (أرباح) | مستخدم (usr...91) سحب 12,000 ل.س (أرباح)
             </div>
         </div>
 
@@ -400,24 +417,32 @@
             <!-- Home Page -->
             <div id="pageHome" class="page active">
                 <div class="balance-card">
-                    <span>رصيد الحساب الإجمالي</span>
+                    <span>ملخص أرباح ورصيد الحساب</span>
                     <div class="balance-grid">
                         <div class="balance-item">
-                            <span>بالدولار</span>
-                            <h3 id="userUsdtBalance">0.00 $</h3>
+                            <span>أرباح $ (قابل للسحب)</span>
+                            <h3 id="userUsdtProfit">0.00 $</h3>
                         </div>
                         <div class="balance-item">
-                            <span>بالليرة السورية</span>
-                            <h3 id="userSypBalance">0 ل.س</h3>
+                            <span>أرباح ل.س (قابل للسحب)</span>
+                            <h3 id="userSypProfit">0 ل.س</h3>
+                        </div>
+                        <div class="balance-item">
+                            <span>إيداع $ (للاستثمار)</span>
+                            <h3 id="userUsdtDep">0.00 $</h3>
+                        </div>
+                        <div class="balance-item">
+                            <span>إيداع ل.س (للاستثمار)</span>
+                            <h3 id="userSypDep">0 ل.س</h3>
                         </div>
                     </div>
                 </div>
 
                 <div class="actions-grid">
                     <div class="action-btn" onclick="openModal('depositUsdtModal')">📥 إيداع رقمي (USDT)</div>
-                    <div class="action-btn" onclick="openModal('withdrawUsdtModal')">📤 سحب رقمي (USDT)</div>
+                    <div class="action-btn" onclick="openModal('withdrawUsdtModal')">📤 سحب رقمي (الأرباح)</div>
                     <div class="action-btn" onclick="openModal('depositShamModal')">💳 إيداع شام كاش</div>
-                    <div class="action-btn" onclick="openModal('withdrawShamModal')">💳 سحب شام كاش</div>
+                    <div class="action-btn" onclick="openModal('withdrawShamModal')">💳 سحب شام كاش (الأرباح)</div>
                 </div>
 
                 <div class="balance-card">
@@ -436,7 +461,7 @@
                 <div class="trust-banner">
                     <h4>🛡️ المنصة الموثوقة الأولى LKPO</h4>
                     <p>
-                        نحن في <strong>LKPO</strong> نضمن لك بيئة استثمارية آمنة 100% مع نظام حماية مشفر وإيداعات وسحوبات فورية ومباشرة. أموالك وأرباحك محصنة بأعلى معايير الأمان العالمية، مع دعم فني متواصل لتأمين عملياتك المالية بسرعة وسلاسة. استثمر بثقة وابدأ في تحقيق أرباحك اليوم!
+                        نحن في <strong>LKPO</strong> نضمن لك بيئة استثمارية آمنة 100%. الرصيد المودع مخصص لتفعيل مستويات VIP والمهام اليومية، بينما تتاح جميع **الأرباح الناتجة للسحب الفوري والكامل** بدون أي قيود!
                     </p>
                 </div>
             </div>
@@ -476,6 +501,26 @@
                 <div id="vipUsdtList"></div>
             </div>
 
+            <!-- History Page (New) -->
+            <div id="pageHistory" class="page">
+                <h3 style="margin-bottom:15px; color:var(--primary-color)">سجل حركات الحساب</h3>
+                <div class="balance-card" style="padding:10px;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>التاريخ والوقت</th>
+                                <th>النوع</th>
+                                <th>المبلغ</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userHistoryList">
+                            <tr><td colspan="4">لا يوجد حركات مسجلة حالياً</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Team Page -->
             <div id="pageTeam" class="page">
                 <h3 style="margin-bottom:15px; color:var(--primary-color)">فريق العمل</h3>
@@ -483,7 +528,7 @@
                     <p style="font-size:13px;">رابط الدعوة الخاص بك:</p>
                     <input type="text" id="inviteLink" readonly style="width:100%; padding:8px; margin:5px 0; background:#000; color:#fff; border:none;">
                     <p style="font-size:13px;">كود الدعوة: <b id="userInviteCodeDisplay" style="color:var(--primary-color)"></b></p>
-                    <p style="font-size:12px; color:var(--text-muted); margin-top:5px;">نسبة ربح الدعوات: 10% من أرباح الفريق</p>
+                    <p style="font-size:12px; color:var(--text-muted); margin-top:5px;">نسبة ربح الدعوات: 10% ينزل في رصيد أرباحك مباشرة</p>
                 </div>
                 <h4>سجل المدعوين</h4>
                 <table class="table">
@@ -501,10 +546,13 @@
                 <h3 style="margin-bottom:15px; color:var(--primary-color)">حسابي</h3>
                 <div class="balance-card">
                     <p><strong>البريد الإلكتروني:</strong> <span id="accEmail"></span></p>
-                    <p style="margin-top:10px;"><strong>مستوى VIP ل.س:</strong> <span id="accSypVip" style="color:var(--primary-color)">غير مفعل</span></p>
-                    <p style="margin-top:5px;"><strong>مستوى VIP $:</strong> <span id="accUsdtVip" style="color:var(--primary-color)">غير مفعل</span></p>
-                    <p style="margin-top:10px;"><strong>رصيد الليرة السورية:</strong> <span id="accSyp"></span></p>
-                    <p style="margin-top:5px;"><strong>رصيد الدولار:</strong> <span id="accUsdt"></span></p>
+                    <p style="margin-top:8px;"><strong>مستوى VIP ل.س:</strong> <span id="accSypVip" style="color:var(--primary-color)">غير مفعل</span></p>
+                    <p style="margin-top:4px;"><strong>مستوى VIP $:</strong> <span id="accUsdtVip" style="color:var(--primary-color)">غير مفعل</span></p>
+                    <hr style="border-color:var(--border-color); margin:10px 0;">
+                    <p><strong>أرباح الدولار (قابل للسحب):</strong> <span id="accUsdtProfit" style="color:var(--success)"></span></p>
+                    <p style="margin-top:4px;"><strong>أرباح الليرة (قابل للسحب):</strong> <span id="accSypProfit" style="color:var(--success)"></span></p>
+                    <p style="margin-top:8px;"><strong>رصيد إيداع الدولار:</strong> <span id="accUsdtDep"></span></p>
+                    <p style="margin-top:4px;"><strong>رصيد إيداع الليرة:</strong> <span id="accSypDep"></span></p>
                 </div>
                 
                 <div id="adminPanelSection" style="display:none;" class="balance-card">
@@ -527,6 +575,7 @@
             <div class="nav-item" onclick="switchPage('pageInvest', this)">الاستثمار</div>
             <div class="nav-item" onclick="switchPage('pageVipSyp', this)">VIP ل.س</div>
             <div class="nav-item" onclick="switchPage('pageVipUsdt', this)">VIP $</div>
+            <div class="nav-item" onclick="switchPage('pageHistory', this)">السجل</div>
             <div class="nav-item" onclick="switchPage('pageTeam', this)">الفريق</div>
             <div class="nav-item" onclick="switchPage('pageAccount', this)">حسابي</div>
         </nav>
@@ -539,7 +588,7 @@
             <h4>إشعارات النظام</h4>
             <div style="margin-top:15px; font-size:13px;" id="notificationsContent">
                 <p>• مرحباً بك في منصة LKPO.</p>
-                <p>• التحديث الجديد: أضيفت شبكات شام كاش ودعم تلغرام الفوري.</p>
+                <p>• تنبيه: الإيداعات مخصصة لفتح المستويات والمهام، والسحب متاح فقط لحصيلة أرباحك المتولدة.</p>
             </div>
         </div>
     </div>
@@ -577,8 +626,14 @@
     <div id="withdrawUsdtModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('withdrawUsdtModal')">&times;</span>
-            <h4>سحب رقمي (USDT)</h4>
-            <div class="form-group" style="margin-top:10px;">
+            <h4>سحب أرباح USDT الرقمية</h4>
+
+            <div class="withdraw-info-box">
+                <span style="font-size:12px; color:var(--text-muted);">الأرباح المتاحة للسحب حالياً:</span>
+                <h3 id="modalUsdtProfitDisplay">0.00 $</h3>
+            </div>
+
+            <div class="form-group">
                 <label>عنوان المحفظة</label>
                 <input type="text" id="witUsdtWallet" placeholder="أدخل عنوان محفظتك">
             </div>
@@ -588,9 +643,9 @@
             </div>
             <div class="form-group">
                 <label>كمية السحب ($)</label>
-                <input type="number" id="witUsdtAmount" placeholder="أدخل المبلغ">
+                <input type="number" id="witUsdtAmount" placeholder="أدخل مبلغ السحب من أرباحك">
             </div>
-            <div class="note">ملاحظة: أقل سحب هو 1$</div>
+            <div class="note">ملاحظة: أقل سحب 1$ (يمكنك سحب الأرباح المتاحة فقط).</div>
             <button class="btn" onclick="submitRequest('سحب USDT')">إرسال طلب السحب</button>
         </div>
     </div>
@@ -619,8 +674,14 @@
     <div id="withdrawShamModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('withdrawShamModal')">&times;</span>
-            <h4>سحب شام كاش</h4>
-            <div class="form-group" style="margin-top:10px;">
+            <h4>سحب أرباح شام كاش</h4>
+
+            <div class="withdraw-info-box">
+                <span style="font-size:12px; color:var(--text-muted);">الأرباح المتاحة للسحب حالياً:</span>
+                <h3 id="modalSypProfitDisplay">0 ل.س</h3>
+            </div>
+
+            <div class="form-group">
                 <label>عنوان المحفظة / الرقم</label>
                 <input type="text" id="witShamWallet" placeholder="عنوان حساب شام كاش">
             </div>
@@ -628,7 +689,7 @@
                 <label>كمية السحب (ل.س)</label>
                 <input type="number" id="witShamAmount" placeholder="أدخل المبلغ">
             </div>
-            <div class="note">ملاحظة: أقل سحب هو 100 ل.س</div>
+            <div class="note">ملاحظة: أقل سحب هو 100 ل.س (يمكنك سحب الأرباح المتاحة فقط).</div>
             <button class="btn" onclick="submitRequest('سحب شام كاش')">إرسال طلب السحب</button>
         </div>
     </div>
@@ -646,6 +707,7 @@
 
         if(!localStorage.getItem('usersDB')) localStorage.setItem('usersDB', JSON.stringify([]));
         if(!localStorage.getItem('requestsDB')) localStorage.setItem('requestsDB', JSON.stringify([]));
+        if(!localStorage.getItem('historyDB')) localStorage.setItem('historyDB', JSON.stringify([]));
 
         window.onload = function() {
             const savedSession = localStorage.getItem('activeUser');
@@ -655,6 +717,20 @@
             }
             updateCryptoAddress();
         };
+
+        function addHistoryRecord(email, type, amount, status) {
+            let history = JSON.parse(localStorage.getItem('historyDB'));
+            let dateStr = new Date().toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' });
+            history.unshift({
+                id: Date.now(),
+                email: email,
+                date: dateStr,
+                type: type,
+                amount: amount,
+                status: status
+            });
+            localStorage.setItem('historyDB', JSON.stringify(history));
+        }
 
         function updateCryptoAddress() {
             let net = document.getElementById('depUsdtNet').value;
@@ -691,8 +767,10 @@
                 const newUser = {
                     email: email,
                     password: password,
-                    sypBalance: 0,
-                    usdtBalance: 0,
+                    sypProfit: 0,
+                    usdtProfit: 0,
+                    sypDeposit: 0,
+                    usdtDeposit: 0,
                     vipSypLevel: 0,
                     vipUsdtLevel: 0,
                     inviteCode: 'LK' + Math.floor(1000 + Math.random() * 9000),
@@ -723,18 +801,31 @@
             let users = JSON.parse(localStorage.getItem('usersDB'));
             currentUser = users.find(u => u.email === currentUser.email) || currentUser;
 
-            document.getElementById('userUsdtBalance').innerText = currentUser.usdtBalance.toFixed(2) + " $";
-            document.getElementById('userSypBalance').innerText = currentUser.sypBalance + " ل.س";
+            if(currentUser.usdtProfit === undefined) currentUser.usdtProfit = currentUser.usdtBalance || 0;
+            if(currentUser.sypProfit === undefined) currentUser.sypProfit = currentUser.sypBalance || 0;
+            if(currentUser.usdtDeposit === undefined) currentUser.usdtDeposit = 0;
+            if(currentUser.sypDeposit === undefined) currentUser.sypDeposit = 0;
+
+            document.getElementById('userUsdtProfit').innerText = currentUser.usdtProfit.toFixed(2) + " $";
+            document.getElementById('userSypProfit').innerText = currentUser.sypProfit + " ل.س";
+            document.getElementById('userUsdtDep').innerText = currentUser.usdtDeposit.toFixed(2) + " $";
+            document.getElementById('userSypDep').innerText = currentUser.sypDeposit + " ل.س";
+
+            document.getElementById('modalUsdtProfitDisplay').innerText = currentUser.usdtProfit.toFixed(2) + " $";
+            document.getElementById('modalSypProfitDisplay').innerText = currentUser.sypProfit + " ل.س";
+
             document.getElementById('accEmail').innerText = currentUser.email;
-            document.getElementById('accSyp').innerText = currentUser.sypBalance + " ل.س";
-            document.getElementById('accUsdt').innerText = currentUser.usdtBalance.toFixed(2) + " $";
+            document.getElementById('accSypProfit').innerText = currentUser.sypProfit + " ل.س";
+            document.getElementById('accUsdtProfit').innerText = currentUser.usdtProfit.toFixed(2) + " $";
+            document.getElementById('accSypDep').innerText = currentUser.sypDeposit + " ل.س";
+            document.getElementById('accUsdtDep').innerText = currentUser.usdtDeposit.toFixed(2) + " $";
+
             document.getElementById('accSypVip').innerText = currentUser.vipSypLevel > 0 ? "VIP " + currentUser.vipSypLevel : "غير مفعل";
             document.getElementById('accUsdtVip').innerText = currentUser.vipUsdtLevel > 0 ? "VIP " + currentUser.vipUsdtLevel : "غير مفعل";
 
             document.getElementById('userInviteCodeDisplay').innerText = currentUser.inviteCode;
             document.getElementById('inviteLink').value = window.location.origin + "?ref=" + currentUser.inviteCode;
 
-            // Status Badge Updates
             let sypBadge = document.getElementById('sypTaskStatus');
             if(currentUser.vipSypLevel > 0) {
                 sypBadge.innerText = "مفعلة (VIP " + currentUser.vipSypLevel + ")";
@@ -753,10 +844,39 @@
                 usdtBadge.className = "badge badge-locked";
             }
 
+            loadUserHistory();
+
             if(currentUser.email === ADMIN_EMAIL) {
                 document.getElementById('adminPanelSection').style.display = 'block';
                 loadAdminRequests();
             }
+        }
+
+        function loadUserHistory() {
+            let history = JSON.parse(localStorage.getItem('historyDB'));
+            let userHistory = history.filter(h => h.email === currentUser.email);
+            let container = document.getElementById('userHistoryList');
+            container.innerHTML = '';
+
+            if(userHistory.length === 0) {
+                container.innerHTML = '<tr><td colspan="4">لا يوجد حركات مسجلة حالياً</td></tr>';
+                return;
+            }
+
+            userHistory.forEach(item => {
+                let classType = 'type-task';
+                if(item.type.includes('إيداع')) classType = 'type-deposit';
+                else if(item.type.includes('سحب')) classType = 'type-withdraw';
+                else if(item.type.includes('VIP')) classType = 'type-vip';
+
+                container.innerHTML += `
+                    <tr>
+                        <td style="font-size:10px;">${item.date}</td>
+                        <td class="${classType}">${item.type}</td>
+                        <td>${item.amount}</td>
+                        <td>${item.status}</td>
+                    </tr>`;
+            });
         }
 
         function switchPage(pageId, el) {
@@ -766,38 +886,55 @@
             if(el) el.classList.add('active');
         }
 
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function openModal(id) { 
+            updateUI();
+            document.getElementById(id).style.display = 'flex'; 
+        }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
         function submitRequest(type) {
             let req = { id: Date.now(), email: currentUser.email, type: type, status: 'قيد الانتظار' };
-            
+            let amtStr = "";
+
             if(type === 'إيداع USDT') {
                 let amt = parseFloat(document.getElementById('depUsdtAmount').value);
                 if(amt < 1) return alert("أقل إيداع هو 1$");
                 req.amount = amt + " $"; req.details = "شبكة: " + document.getElementById('depUsdtNet').value;
+                amtStr = amt + " $";
             } else if(type === 'سحب USDT') {
                 let amt = parseFloat(document.getElementById('witUsdtAmount').value);
                 if(amt < 1) return alert("أقل سحب هو 1$");
-                if(currentUser.usdtBalance < amt) return alert("رصيدك غير كافي");
+                if(currentUser.usdtProfit < amt) {
+                    return alert("عذراً، المبلغ المطلوب أكبر من رصيد الأرباح المتاح لديك للسحب!");
+                }
                 req.amount = amt + " $"; req.details = "عنوان: " + document.getElementById('witUsdtWallet').value + " (" + document.getElementById('witUsdtNet').value + ")";
+                amtStr = amt + " $";
             } else if(type === 'إيداع شام كاش') {
                 let amt = parseFloat(document.getElementById('depShamAmount').value);
                 if(amt < 400) return alert("أقل إيداع 400 ل.س");
                 req.amount = amt + " ل.س"; req.details = "شام كاش";
+                amtStr = amt + " ل.س";
             } else if(type === 'سحب شام كاش') {
                 let amt = parseFloat(document.getElementById('witShamAmount').value);
                 if(amt < 100) return alert("أقل سحب 100 ل.س");
-                if(currentUser.sypBalance < amt) return alert("رصيدك غير كافي");
+                if(currentUser.sypProfit < amt) {
+                    return alert("عذراً، المبلغ المطلوب أكبر من رصيد أرباح الليرة المتاح لديك للسحب!");
+                }
                 req.amount = amt + " ل.س"; req.details = "محفظة: " + document.getElementById('witShamWallet').value;
+                amtStr = amt + " ل.س";
             }
 
             let reqs = JSON.parse(localStorage.getItem('requestsDB'));
             reqs.push(req);
             localStorage.setItem('requestsDB', JSON.stringify(reqs));
+
+            // Log Transaction into history
+            addHistoryRecord(currentUser.email, type, amtStr, 'قيد الانتظار');
+
             alert("تم إرسال الطلب بنجاح إلى الأدمن للمراجعة.");
             closeModal('depositUsdtModal'); closeModal('withdrawUsdtModal');
             closeModal('depositShamModal'); closeModal('withdrawShamModal');
+            updateUI();
         }
 
         function claimTask(currency) {
@@ -813,9 +950,10 @@
                     return alert("يمكنك تنفيذ مهمة الليرة مرة واحدة كل 24 ساعة فقط!");
                 }
                 let reward = 500 * currentUser.vipSypLevel;
-                users[idx].sypBalance += reward;
+                users[idx].sypProfit = (users[idx].sypProfit || 0) + reward;
                 users[idx].lastTaskSyp = now;
-                alert(`تم تنفيذ المهمة ونزل في حسابك ${reward} ل.س!`);
+                addHistoryRecord(currentUser.email, 'مهمة يومية (ل.س)', reward + " ل.س", 'مكتمل');
+                alert(`تم تنفيذ المهمة وإضافة ${reward} ل.س إلى رصيد أرباحك القابل للسحب!`);
             } else {
                 if(currentUser.vipUsdtLevel <= 0) {
                     return alert("يجب تفعيل مستوى VIP الدولار أولاً لفتح هذه المهمة!");
@@ -824,9 +962,10 @@
                     return alert("يمكنك تنفيذ مهمة الدولار مرة واحدة كل 24 ساعة فقط!");
                 }
                 let reward = 1.0 * currentUser.vipUsdtLevel;
-                users[idx].usdtBalance += reward;
+                users[idx].usdtProfit = (users[idx].usdtProfit || 0) + reward;
                 users[idx].lastTaskUsdt = now;
-                alert(`تم تنفيذ المهمة ونزل في حسابك ${reward}$!`);
+                addHistoryRecord(currentUser.email, 'مهمة يومية ($)', reward + " $", 'مكتمل');
+                alert(`تم تنفيذ المهمة وإضافة ${reward}$ إلى رصيد أرباحك القابل للسحب!`);
             }
             
             localStorage.setItem('usersDB', JSON.stringify(users));
@@ -866,21 +1005,39 @@
         }
 
         function buyVip(type, price, level) {
-            if(type === 'SYP' && currentUser.sypBalance < price) return alert("رصيد الليرة السورية غير كافٍ");
-            if(type === 'USDT' && currentUser.usdtBalance < price) return alert("رصيد الدولار غير كافٍ");
-            
             let users = JSON.parse(localStorage.getItem('usersDB'));
             let idx = users.findIndex(u => u.email === currentUser.email);
+
             if(type === 'SYP') {
-                users[idx].sypBalance -= price;
+                let totalAvailable = (currentUser.sypDeposit || 0) + (currentUser.sypProfit || 0);
+                if(totalAvailable < price) return alert("رصيدك غير كافٍ للاشتراك!");
+
+                if(users[idx].sypDeposit >= price) {
+                    users[idx].sypDeposit -= price;
+                } else {
+                    let diff = price - users[idx].sypDeposit;
+                    users[idx].sypDeposit = 0;
+                    users[idx].sypProfit -= diff;
+                }
                 users[idx].vipSypLevel = level;
+                addHistoryRecord(currentUser.email, `اشتراك VIP ${level} (ل.س)`, price + " ل.س", 'مكتمل');
             } else {
-                users[idx].usdtBalance -= price;
+                let totalAvailable = (currentUser.usdtDeposit || 0) + (currentUser.usdtProfit || 0);
+                if(totalAvailable < price) return alert("رصيدك غير كافٍ للاشتراك!");
+
+                if(users[idx].usdtDeposit >= price) {
+                    users[idx].usdtDeposit -= price;
+                } else {
+                    let diff = price - users[idx].usdtDeposit;
+                    users[idx].usdtDeposit = 0;
+                    users[idx].usdtProfit -= diff;
+                }
                 users[idx].vipUsdtLevel = level;
+                addHistoryRecord(currentUser.email, `اشتراك VIP ${level} ($)`, price + " $", 'مكتمل');
             }
 
             localStorage.setItem('usersDB', JSON.stringify(users));
-            alert("تم الاشتراك في المستوى بنجاح وتفعيل مهمتك اليومية الخاصة بها!");
+            alert("تم الاشتراك في المستوى بنجاح وتفعيل مهمتك اليومية!");
             updateUI();
         }
 
@@ -908,19 +1065,28 @@
         function handleAdminReq(reqId, accept) {
             let reqs = JSON.parse(localStorage.getItem('requestsDB'));
             let users = JSON.parse(localStorage.getItem('usersDB'));
+            let history = JSON.parse(localStorage.getItem('historyDB'));
             let req = reqs.find(r => r.id === reqId);
             let userIdx = users.findIndex(u => u.email === req.email);
 
             if(accept && userIdx !== -1) {
                 let val = parseFloat(req.amount);
-                if(req.type.includes('إيداع USDT')) users[userIdx].usdtBalance += val;
-                else if(req.type.includes('سحب USDT')) users[userIdx].usdtBalance -= val;
-                else if(req.type.includes('إيداع شام')) users[userIdx].sypBalance += val;
-                else if(req.type.includes('سحب شام')) users[userIdx].sypBalance -= val;
+                if(req.type.includes('إيداع USDT')) users[userIdx].usdtDeposit = (users[userIdx].usdtDeposit || 0) + val;
+                else if(req.type.includes('سحب USDT')) users[userIdx].usdtProfit = Math.max(0, (users[userIdx].usdtProfit || 0) - val);
+                else if(req.type.includes('إيداع شام')) users[userIdx].sypDeposit = (users[userIdx].sypDeposit || 0) + val;
+                else if(req.type.includes('سحب شام')) users[userIdx].sypProfit = Math.max(0, (users[userIdx].sypProfit || 0) - val);
             }
+
             req.status = accept ? 'تم القبول' : 'مرفوض';
+
+            // Update status in history
+            let hItem = history.find(h => h.email === req.email && h.type === req.type && h.status === 'قيد الانتظار');
+            if(hItem) hItem.status = accept ? 'تم القبول' : 'مرفوض';
+
             localStorage.setItem('requestsDB', JSON.stringify(reqs));
             localStorage.setItem('usersDB', JSON.stringify(users));
+            localStorage.setItem('historyDB', JSON.stringify(history));
+
             loadAdminRequests();
             updateUI();
         }
