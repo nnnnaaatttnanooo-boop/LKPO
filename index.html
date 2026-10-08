@@ -14,6 +14,7 @@
             --border-color: #2b2f36;
             --success: #0ecb81;
             --danger: #f6465d;
+            --telegram-color: #0088cc;
         }
 
         * {
@@ -119,6 +120,27 @@
             font-size: 18px;
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .telegram-btn {
+            background: var(--telegram-color);
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         .notifications-btn {
             background: transparent;
             border: none;
@@ -204,9 +226,6 @@
             color: var(--primary-color);
             font-size: 15px;
             margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         .trust-banner p {
@@ -228,6 +247,16 @@
 
         .vip-info h4 { color: var(--primary-color); }
         .vip-info p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+        .badge {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+        .badge-locked { background: #3a2226; color: var(--danger); }
+        .badge-active { background: #1c3d2f; color: var(--success); }
 
         nav {
             position: fixed;
@@ -353,12 +382,17 @@
                 <div class="logo">LK</div>
                 <span style="font-weight: bold;">LKPO</span>
             </div>
-            <button class="notifications-btn" onclick="openModal('notificationsModal')">🔔</button>
+            <div class="header-actions">
+                <a href="https://t.me/your_telegram_support" target="_blank" class="telegram-btn">
+                    ✈️ دعم تلغرام
+                </a>
+                <button class="notifications-btn" onclick="openModal('notificationsModal')">🔔</button>
+            </div>
         </header>
 
         <div class="ticker">
             <div class="ticker-content" id="withdrawTicker">
-                منبر السحوبات: مستخدم (usr...42) سحب 50$ USDT \vert{} مستخدم (usr...91) سحب 12,000 ل.س \vert{} مستخدم (usr...11) سحب 100$ USDT
+                منبر السحوبات: مستخدم (usr...42) سحب 50$ USDT | مستخدم (usr...91) سحب 12,000 ل.س | مستخدم (usr...11) سحب 100$ USDT
             </div>
         </div>
 
@@ -399,7 +433,6 @@
                     </div>
                 </div>
 
-                <!-- Trust Announcement Banner -->
                 <div class="trust-banner">
                     <h4>🛡️ المنصة الموثوقة الأولى LKPO</h4>
                     <p>
@@ -411,19 +444,23 @@
             <!-- Investment Page -->
             <div id="pageInvest" class="page">
                 <h3 style="margin-bottom:15px; color:var(--primary-color)">الاستثمار والمهام اليومية</h3>
+                
                 <div class="vip-card">
                     <div class="vip-info">
                         <h4>مهمة الليرة السورية اليومية</h4>
-                        <p>تنفذ مرة كل 24 ساعة</p>
+                        <p>تتطلب الاشتراك في مستوى VIP الليرة السورية</p>
+                        <span id="sypTaskStatus" class="badge badge-locked">مغلقة (تحتاج VIP SYP)</span>
                     </div>
-                    <button class="btn" style="width:auto; padding:8px 15px;" onclick="claimTask('SYP')">تنفيذ (500 ل.س)</button>
+                    <button class="btn" style="width:auto; padding:8px 15px;" onclick="claimTask('SYP')">تنفيذ المهمة</button>
                 </div>
+
                 <div class="vip-card">
                     <div class="vip-info">
                         <h4>مهمة الدولار اليومية</h4>
-                        <p>تنفذ مرة كل 24 ساعة</p>
+                        <p>تتطلب الاشتراك في مستوى VIP الدولار</p>
+                        <span id="usdtTaskStatus" class="badge badge-locked">مغلقة (تحتاج VIP USDT)</span>
                     </div>
-                    <button class="btn" style="width:auto; padding:8px 15px;" onclick="claimTask('USDT')">تنفيذ (1.00 $)</button>
+                    <button class="btn" style="width:auto; padding:8px 15px;" onclick="claimTask('USDT')">تنفيذ المهمة</button>
                 </div>
             </div>
 
@@ -464,8 +501,10 @@
                 <h3 style="margin-bottom:15px; color:var(--primary-color)">حسابي</h3>
                 <div class="balance-card">
                     <p><strong>البريد الإلكتروني:</strong> <span id="accEmail"></span></p>
+                    <p style="margin-top:10px;"><strong>مستوى VIP ل.س:</strong> <span id="accSypVip" style="color:var(--primary-color)">غير مفعل</span></p>
+                    <p style="margin-top:5px;"><strong>مستوى VIP $:</strong> <span id="accUsdtVip" style="color:var(--primary-color)">غير مفعل</span></p>
                     <p style="margin-top:10px;"><strong>رصيد الليرة السورية:</strong> <span id="accSyp"></span></p>
-                    <p style="margin-top:10px;"><strong>رصيد الدولار:</strong> <span id="accUsdt"></span></p>
+                    <p style="margin-top:5px;"><strong>رصيد الدولار:</strong> <span id="accUsdt"></span></p>
                 </div>
                 
                 <div id="adminPanelSection" style="display:none;" class="balance-card">
@@ -500,12 +539,12 @@
             <h4>إشعارات النظام</h4>
             <div style="margin-top:15px; font-size:13px;" id="notificationsContent">
                 <p>• مرحباً بك في منصة LKPO.</p>
-                <p>• التحديث الجديد: أضيفت شبكات شام كاش وسحوبات الليرة الحديثة.</p>
+                <p>• التحديث الجديد: أضيفت شبكات شام كاش ودعم تلغرام الفوري.</p>
             </div>
         </div>
     </div>
 
-    <!-- Deposit USDT Modal with Address Copy -->
+    <!-- Deposit USDT Modal -->
     <div id="depositUsdtModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('depositUsdtModal')">&times;</span>
@@ -556,7 +595,7 @@
         </div>
     </div>
 
-    <!-- Deposit Sham Modal with Address Copy -->
+    <!-- Deposit Sham Modal -->
     <div id="depositShamModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('depositShamModal')">&times;</span>
@@ -654,8 +693,11 @@
                     password: password,
                     sypBalance: 0,
                     usdtBalance: 0,
+                    vipSypLevel: 0,
+                    vipUsdtLevel: 0,
                     inviteCode: 'LK' + Math.floor(1000 + Math.random() * 9000),
-                    lastTask: 0
+                    lastTaskSyp: 0,
+                    lastTaskUsdt: 0
                 };
                 users.push(newUser);
                 localStorage.setItem('usersDB', JSON.stringify(users));
@@ -686,8 +728,30 @@
             document.getElementById('accEmail').innerText = currentUser.email;
             document.getElementById('accSyp').innerText = currentUser.sypBalance + " ل.س";
             document.getElementById('accUsdt').innerText = currentUser.usdtBalance.toFixed(2) + " $";
+            document.getElementById('accSypVip').innerText = currentUser.vipSypLevel > 0 ? "VIP " + currentUser.vipSypLevel : "غير مفعل";
+            document.getElementById('accUsdtVip').innerText = currentUser.vipUsdtLevel > 0 ? "VIP " + currentUser.vipUsdtLevel : "غير مفعل";
+
             document.getElementById('userInviteCodeDisplay').innerText = currentUser.inviteCode;
             document.getElementById('inviteLink').value = window.location.origin + "?ref=" + currentUser.inviteCode;
+
+            // Status Badge Updates
+            let sypBadge = document.getElementById('sypTaskStatus');
+            if(currentUser.vipSypLevel > 0) {
+                sypBadge.innerText = "مفعلة (VIP " + currentUser.vipSypLevel + ")";
+                sypBadge.className = "badge badge-active";
+            } else {
+                sypBadge.innerText = "مغلقة (تحتاج VIP SYP)";
+                sypBadge.className = "badge badge-locked";
+            }
+
+            let usdtBadge = document.getElementById('usdtTaskStatus');
+            if(currentUser.vipUsdtLevel > 0) {
+                usdtBadge.innerText = "مفعلة (VIP " + currentUser.vipUsdtLevel + ")";
+                usdtBadge.className = "badge badge-active";
+            } else {
+                usdtBadge.innerText = "مغلقة (تحتاج VIP USDT)";
+                usdtBadge.className = "badge badge-locked";
+            }
 
             if(currentUser.email === ADMIN_EMAIL) {
                 document.getElementById('adminPanelSection').style.display = 'block';
@@ -738,18 +802,34 @@
 
         function claimTask(currency) {
             let now = Date.now();
-            if(now - currentUser.lastTask < 86400000) {
-                return alert("يمكنك تنفيذ المهمة مرة واحدة كل 24 ساعة فقط!");
-            }
             let users = JSON.parse(localStorage.getItem('usersDB'));
             let idx = users.findIndex(u => u.email === currentUser.email);
+
+            if(currency === 'SYP') {
+                if(currentUser.vipSypLevel <= 0) {
+                    return alert("يجب تفعيل مستوى VIP الليرة السورية أولاً لفتح هذه المهمة!");
+                }
+                if(now - (currentUser.lastTaskSyp || 0) < 86400000) {
+                    return alert("يمكنك تنفيذ مهمة الليرة مرة واحدة كل 24 ساعة فقط!");
+                }
+                let reward = 500 * currentUser.vipSypLevel;
+                users[idx].sypBalance += reward;
+                users[idx].lastTaskSyp = now;
+                alert(`تم تنفيذ المهمة ونزل في حسابك ${reward} ل.س!`);
+            } else {
+                if(currentUser.vipUsdtLevel <= 0) {
+                    return alert("يجب تفعيل مستوى VIP الدولار أولاً لفتح هذه المهمة!");
+                }
+                if(now - (currentUser.lastTaskUsdt || 0) < 86400000) {
+                    return alert("يمكنك تنفيذ مهمة الدولار مرة واحدة كل 24 ساعة فقط!");
+                }
+                let reward = 1.0 * currentUser.vipUsdtLevel;
+                users[idx].usdtBalance += reward;
+                users[idx].lastTaskUsdt = now;
+                alert(`تم تنفيذ المهمة ونزل في حسابك ${reward}$!`);
+            }
             
-            if(currency === 'SYP') users[idx].sypBalance += 500;
-            else users[idx].usdtBalance += 1.0;
-            
-            users[idx].lastTask = now;
             localStorage.setItem('usersDB', JSON.stringify(users));
-            alert("تم تنفيذ المهمة وإضافة الأرباح لرصيدك!");
             updateUI();
         }
 
@@ -765,7 +845,7 @@
                             <h4>VIP ${idx+1} (ل.س)</h4>
                             <p>سعر الاشتراك: ${price} ل.س | نسبة الربح: ${ratio}%</p>
                         </div>
-                        <button class="btn" style="width:auto;" onclick="buyVip('SYP', ${price})">اشتراك</button>
+                        <button class="btn" style="width:auto;" onclick="buyVip('SYP', ${price}, ${idx+1})">اشتراك</button>
                     </div>`;
             });
 
@@ -780,22 +860,27 @@
                             <h4>VIP ${idx+1} ($)</h4>
                             <p>سعر الاشتراك: ${price}$ | نسبة الربح: ${ratio}%</p>
                         </div>
-                        <button class="btn" style="width:auto;" onclick="buyVip('USDT', ${price})">اشتراك</button>
+                        <button class="btn" style="width:auto;" onclick="buyVip('USDT', ${price}, ${idx+1})">اشتراك</button>
                     </div>`;
             });
         }
 
-        function buyVip(type, price) {
+        function buyVip(type, price, level) {
             if(type === 'SYP' && currentUser.sypBalance < price) return alert("رصيد الليرة السورية غير كافٍ");
             if(type === 'USDT' && currentUser.usdtBalance < price) return alert("رصيد الدولار غير كافٍ");
             
             let users = JSON.parse(localStorage.getItem('usersDB'));
             let idx = users.findIndex(u => u.email === currentUser.email);
-            if(type === 'SYP') users[idx].sypBalance -= price;
-            else users[idx].usdtBalance -= price;
+            if(type === 'SYP') {
+                users[idx].sypBalance -= price;
+                users[idx].vipSypLevel = level;
+            } else {
+                users[idx].usdtBalance -= price;
+                users[idx].vipUsdtLevel = level;
+            }
 
             localStorage.setItem('usersDB', JSON.stringify(users));
-            alert("تم الاشتراك في المستوى بنجاح!");
+            alert("تم الاشتراك في المستوى بنجاح وتفعيل مهمتك اليومية الخاصة بها!");
             updateUI();
         }
 
