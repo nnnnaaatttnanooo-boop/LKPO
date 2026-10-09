@@ -67,6 +67,17 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// جلب بيانات حساب المستخدم الحالي والأرصدة
+app.get('/api/user/:email', async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.email });
+    if (user) res.json(user);
+    else res.status(404).json({});
+  } catch (err) {
+    res.status(500).json({});
+  }
+});
+
 // === مسارات المعاملات والطلبات ===
 
 // إرسال طلب جديد (إيداع أو سحب)
@@ -101,14 +112,47 @@ app.get('/api/transactions/admin', async (req, res) => {
   }
 });
 
-// تحديث حالة الطلب من الأدمن (مقبول / مرفوض)
+// تحديث حالة الطلب من الأدمن + تحديث رصيد المستخدم تلقائياً عند الموافقة
 app.post('/api/transactions/admin/update', async (req, res) => {
   try {
     const { txId, status } = req.body;
-    await Transaction.findByIdAndUpdate(txId, { status });
-    res.json({ success: true, message: `تمت تحديث حالة الطلب إلى: ${status}` });
+
+    const tx = await Transaction.findById(txId);
+    if (!tx) return res.status(404).json({ success: false, message: 'الطلب غير موجود' });
+
+    if (tx.status === 'قيد الانتظار' && status === 'مقبول') {
+      const user = await User.findOne({ username: tx.userEmail });
+      
+      if (user) {
+        if (tx.type === 'إيداع') {
+          if (tx.method.includes('دولار')) {
+            user.balanceUSD += tx.amount;
+          } else if (tx.method.includes('شام كاش')) {
+            user.balanceSYP += tx.amount;
+          }
+        } else if (tx.type === 'سحب') {
+          if (tx.method.includes('دولار')) {
+            if (user.balanceUSD < tx.amount) {
+              return res.status(400).json({ success: false, message: 'رصيد المستخدم غير كافٍ للسحب' });
+            }
+            user.balanceUSD -= tx.amount;
+          } else if (tx.method.includes('شام كاش')) {
+            if (user.balanceSYP < tx.amount) {
+              return res.status(400).json({ success: false, message: 'رصيد المستخدم غير كافٍ للسحب' });
+            }
+            user.balanceSYP -= tx.amount;
+          }
+        }
+        await user.save();
+      }
+    }
+
+    tx.status = status;
+    await tx.save();
+
+    res.json({ success: true, message: `تمت تحديث حالة الطلب إلى (${status}) وتحديث رصيد المستخدم تلقائياً` });
   } catch (err) {
-    res.status(500).json({ success: false, message: 'فشل في تحديث حالة الطلب' });
+    res.status(500).json({ success: false, message: 'حدث خطأ أثناء تحديث الحساب' });
   }
 });
 
