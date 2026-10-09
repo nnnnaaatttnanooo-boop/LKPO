@@ -12,24 +12,28 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log('✅ تم الاتصال بقاعدة البيانات بنجاح'))
   .catch(err => console.error('❌ خطأ في الاتصال بقاعدة البيانات:', err));
 
-// 1. مخطط المستخدم المعدل (إضافة مستويات الباقات وتتبع الاشتراكات)
+// 1. مخطط المستخدم (إضافة كود الإحالة والربط بالداعي وتتبع الأرباح)
 const UserSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   
-  // أرصدة الدولار
   capitalUSD: { type: Number, default: 0 },
   profitUSD: { type: Number, default: 0 },
-  activeVipUSD: { type: Number, default: 0 }, // مستوى VIP النشط بالدولار (0 يعني غير مشترك)
+  activeVipUSD: { type: Number, default: 0 },
   
-  // أرصدة الليرة السورية
   capitalSYP: { type: Number, default: 0 },
   profitSYP: { type: Number, default: 0 },
-  activeVipSYP: { type: Number, default: 0 }, // مستوى VIP النشط بالليرة (0 يعني غير مشترك)
+  activeVipSYP: { type: Number, default: 0 },
   
   lastBotRunUSD: { type: Date },
   lastBotRunSYP: { type: Date },
-  referralCode: { type: String, default: '' },
+  
+  // نظام الإحالة
+  referralCode: { type: String, unique: true }, // كود الدعوة الخاص بهذا المستخدم
+  referredBy: { type: String, default: '' },      // كود الداعي الذي دعاه
+  referralEarningsUSD: { type: Number, default: 0 }, // إجمالي أرباح الإحالة بالدولار
+  referralEarningsSYP: { type: Number, default: 0 }, // إجمالي أرباح الإحالة بالليرة
+  
   createdAt: { type: Date, default: Date.now }
 });
 const User = mongoose.model('User', UserSchema);
@@ -38,7 +42,7 @@ const User = mongoose.model('User', UserSchema);
 const TransactionSchema = new mongoose.Schema({
   userId: String,
   userEmail: String,
-  type: String,        // 'إيداع' أو 'سحب' أو 'ربح مهمة' أو 'اشتراك VIP'
+  type: String,        
   method: String,
   network: String,
   amount: Number,
@@ -48,7 +52,6 @@ const TransactionSchema = new mongoose.Schema({
 });
 const Transaction = mongoose.model('Transaction', TransactionSchema);
 
-// أسعار ونسب باقات VIP
 const VIP_USD_PACKS = [
   { level: 1, price: 5, rate: 0.15 },
   { level: 2, price: 20, rate: 0.17 },
@@ -71,6 +74,11 @@ const VIP_SYP_PACKS = [
   { level: 8, price: 270000, rate: 0.30 }
 ];
 
+// دالة توليد كود إحالة فريد عشوائي مكون من 6 أرقام/حروف
+function generateRefCode() {
+  return 'LK' + Math.floor(100000 + Math.random() * 900000);
+}
+
 // === مسارات الحسابات ===
 
 app.post('/api/register', async (req, res) => {
@@ -79,7 +87,19 @@ app.post('/api/register', async (req, res) => {
     const existingUser = await User.findOne({ username });
     if (existingUser) return res.status(400).json({ success: false, message: 'اسم المستخدم مسجل بالفعل' });
 
-    const newUser = new User({ username, password, referralCode: referralCode || '' });
+    let myRefCode = generateRefCode();
+    // التأكد من عدم تكرار كود الإحالة
+    while (await User.findOne({ referralCode: myRefCode })) {
+      myRefCode = generateRefCode();
+    }
+
+    const newUser = new User({ 
+      username, 
+      password, 
+      referralCode: myRefCode,
+      referredBy: referralCode ? referralCode.trim() : ''
+    });
+
     await newUser.save();
     res.json({ success: true, message: 'تم فتح الحساب بنجاح!', user: newUser });
   } catch (err) {
@@ -99,17 +119,25 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// جلب بيانات المستخدم مع إحصائيات الفريق
 app.get('/api/user/:email', async (req, res) => {
   try {
     const user = await User.findOne({ username: req.params.email });
-    if (user) res.json(user);
-    else res.status(404).json({});
+    if (!user) return res.status(404).json({});
+
+    // حساب عدد المدعوين المباشرين
+    const invitedCount = await User.countDocuments({ referredBy: user.referralCode });
+
+    res.json({
+      ...user._doc,
+      invitedCount
+    });
   } catch (err) {
     res.status(500).json({});
   }
 });
 
-// === طلب اشتراك في باقة VIP ===
+// === طلب اشتراك في باقة VIP مع توزيع أرباح الإحالة 10% للداعي ===
 app.post('/api/vip/subscribe', async (req, res) => {
   try {
     const { email, level, type } = req.body;
@@ -131,6 +159,43 @@ app.post('/api/vip/subscribe', async (req, res) => {
 
     await user.save();
 
+    // مكافأة الداعي (10% عمولة إحالة مباشرة)
+    if (user.referredBy) {
+      const parentUser = await User.findOne({ referralCode: user.referredBy });
+      if (parentUser) {
+        const commissionRate = 0.10; // 10% عمولة
+        if (type === 'usd') {
+          const bonus = parseFloat((pack.price * commissionRate).toFixed(2));
+          parentUser.profitUSD += bonus;
+          parentUser.referralEarningsUSD += bonus;
+          await parentUser.save();
+
+          await new Transaction({
+            userId: parentUser._id,
+            userEmail: parentUser.username,
+            type: 'عمولة إحالة (10%)',
+            method: 'دولار (USDT)',
+            amount: bonus,
+            status: 'مقبول'
+          }).save();
+        } else {
+          const bonus = Math.round(pack.price * commissionRate);
+          parentUser.profitSYP += bonus;
+          parentUser.referralEarningsSYP += bonus;
+          await parentUser.save();
+
+          await new Transaction({
+            userId: parentUser._id,
+            userEmail: parentUser.username,
+            type: 'عمولة إحالة (10%)',
+            method: 'شام كاش',
+            amount: bonus,
+            status: 'مقبول'
+          }).save();
+        }
+      }
+    }
+
     const tx = new Transaction({
       userId: user._id,
       userEmail: user.username,
@@ -141,20 +206,19 @@ app.post('/api/vip/subscribe', async (req, res) => {
     });
     await tx.save();
 
-    res.json({ success: true, message: `تم تفعيل اشتراك VIP ${level} بنجاح! يمكنك الآن تشغيل الروبوت اليومي.` });
+    res.json({ success: true, message: `تم تفعيل اشتراك VIP ${level} بنجاح!` });
   } catch (err) {
     res.status(500).json({ success: false, message: 'حدث خطأ أثناء الاشتراك' });
   }
 });
 
-// === تشغيل الروبوت مع التحقق من اشتراك VIP ===
+// === تشغيل الروبوت ===
 app.post('/api/bot/run', async (req, res) => {
   try {
     const { email, type } = req.body;
     const user = await User.findOne({ username: email });
     if (!user) return res.status(404).json({ success: false, message: 'المستخدم غير موجود' });
 
-    // 1. التحقق من وجود اشتراك VIP نشط
     if (type === 'usd' && (!user.activeVipUSD || user.activeVipUSD === 0)) {
       return res.status(400).json({ success: false, message: 'عذراً! لا يمكنك تشغيل روبوت الدولار بدون الاشتراك في إحدى باقات VIP الخاصة بالدولار أولاً.' });
     }
@@ -165,13 +229,11 @@ app.post('/api/bot/run', async (req, res) => {
     const now = new Date();
     const lastRun = type === 'usd' ? user.lastBotRunUSD : user.lastBotRunSYP;
 
-    // 2. التحقق من شرط الـ 24 ساعة
     if (lastRun && (now - new Date(lastRun)) < 24 * 60 * 60 * 1000) {
       const hoursLeft = Math.ceil((24 * 60 * 60 * 1000 - (now - new Date(lastRun))) / (1000 * 60 * 60));
       return res.status(400).json({ success: false, message: `لقد نفذت المهمة اليوم! يمكنك التشغيل مجدداً بعد ${hoursLeft} ساعة` });
     }
 
-    // 3. حساب الأرباح القائمة على مستوى VIP للمستخدم
     let profit = 0;
     if (type === 'usd') {
       const pack = VIP_USD_PACKS.find(p => p.level === user.activeVipUSD);
