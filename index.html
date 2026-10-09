@@ -83,19 +83,17 @@
   </div>
 
   <script>
-    // رابط السيرفر المباشر على Render
     const API_URL = "https://lkpo.onrender.com";
 
     let currentUser = JSON.parse(localStorage.getItem('lkpo_user')) || null;
 
-    // تشغيل التحديث فور فتح الصفحة
     window.onload = () => {
       if (currentUser) {
         updateUI();
       }
     };
 
-    // أ. فتح حساب جديد (محدثة)
+    // فتح حساب جديد
     async function handleRegister() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
@@ -109,13 +107,22 @@
           body: JSON.stringify({ username, password })
         });
         const data = await res.json();
-        alert(data.message || "تم إنشاء الحساب بنجاح!");
+        
+        if (res.ok) {
+          alert(data.message || "تم إنشاء الحساب بنجاح!");
+          // التبديل إلى تسجيل الدخول التلقائي بعد التسجيل
+          currentUser = data.user;
+          localStorage.setItem('lkpo_user', JSON.stringify(currentUser));
+          updateUI();
+        } else {
+          alert(data.message || "فشلت عملية إنشاء الحساب");
+        }
       } catch (err) {
         alert("خطأ في الاتصال بالسيرفر");
       }
     }
 
-    // ب. تسجيل الدخول (محدثة)
+    // تسجيل الدخول
     async function handleLogin() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
@@ -133,8 +140,8 @@
         if (res.ok) {
           currentUser = data.user;
           localStorage.setItem('lkpo_user', JSON.stringify(currentUser));
-          updateUI();
           alert(data.message || "تم تسجيل الدخول بنجاح!");
+          updateUI(); // التبديل الفوري للواجهة
         } else {
           alert(data.message || "فشلت عملية تسجيل الدخول");
         }
@@ -143,7 +150,7 @@
       }
     }
 
-    // ج. طلب إيداع لفتح VIP2 وشحن الرصيد
+    // طلب إيداع
     async function handleDeposit() {
       const amount = parseFloat(document.getElementById('deposit-amount').value);
       if (!amount || amount <= 0) return alert("يرجى إدخال مبلغ صحيح");
@@ -162,7 +169,7 @@
       }
     }
 
-    // د. تسجيل الخروج
+    // تسجيل الخروج
     function handleLogout() {
       currentUser = null;
       localStorage.removeItem('lkpo_user');
@@ -170,14 +177,14 @@
       document.getElementById('user-card').style.display = 'none';
     }
 
-    // هـ. تحديث الواجهة
+    // تحديث الشاشة
     function updateUI() {
       if (currentUser) {
         document.getElementById('auth-card').style.display = 'none';
         document.getElementById('user-card').style.display = 'block';
         document.getElementById('user-display-name').innerText = currentUser.username;
-        document.getElementById('user-balance').innerText = `$${currentUser.balance}`;
-        document.getElementById('user-vip').innerText = `VIP${currentUser.vipLevel}`;
+        document.getElementById('user-balance').innerText = `$${currentUser.balance || 0}`;
+        document.getElementById('user-vip').innerText = `VIP${currentUser.vipLevel || 1}`;
       }
     }
   </script>
