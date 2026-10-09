@@ -244,7 +244,7 @@
           <button onclick="runBot('usd')" class="btn-success">تشغيل روبوت الدولار (24H)</button>
         </div>
         <div class="card">
-          <h3>روبوت الاستثمار بالليرة السورية</h3>
+          <h3>روبوت الاستثمار بالليرة السورية 🇸🇾</h3>
           <p style="font-size:12px; color:var(--subtext);">يتطلب الاشتراك في باقة VIP ليرة سورية لتفعيل المهمة وتوليد الربح.</p>
           <button onclick="runBot('syp')" class="btn-success">تشغيل روبوت الليرة (24H)</button>
         </div>
@@ -285,13 +285,13 @@
         </div>
       </div>
 
-      <!-- 6. صفحة الفريق -->
+      <!-- 6. صفحة الفريق (تم تصحيح توليد الرابط التلقائي هنا) -->
       <div id="page-team" class="page">
         <div class="card">
           <h3>برنامج إحالة الفريق</h3>
           <p style="font-size:13px;">رابط الدعوة الخاص بك:</p>
-          <input type="text" id="ref-link" readonly value="https://lkpo.app/ref?id=USER123">
-          <button onclick="navigator.clipboard.writeText(document.getElementById('ref-link').value); alert('تم نسخ الرابط!');">نسخ الرابط</button>
+          <input type="text" id="ref-link" readonly value="جاري تحميل الرابط...">
+          <button onclick="navigator.clipboard.writeText(document.getElementById('ref-link').value); alert('تم نسخ رابط الدعوة الخاص بك!');">نسخ الرابط</button>
           <h4 style="margin-top:20px;">جدول أرباح الفريق</h4>
           <table>
             <thead><tr><th>المستوى</th><th>نسبة العمولة</th></tr></thead>
@@ -405,7 +405,11 @@
       document.getElementById('auth-page').style.display = 'none';
       document.getElementById('app').style.display = 'block';
       document.getElementById('prof-email').innerText = currentUser.email;
-      document.getElementById('prof-id').innerText = Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('prof-id').innerText = currentUser._id || Math.floor(100000 + Math.random() * 900000);
+
+      // توليد رابط الدعوة الفعلي والمباشر للمستخدم
+      const siteUrl = window.location.origin + window.location.pathname;
+      document.getElementById('ref-link').value = `${siteUrl}?ref=${currentUser.email}`;
 
       try {
         const res = await fetch(`${API_URL}/api/user/${currentUser.email}`);
