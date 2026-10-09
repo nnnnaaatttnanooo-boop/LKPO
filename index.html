@@ -95,8 +95,8 @@
       border-radius: 8px;
       text-align: center;
     }
-    .balance-box label { font-size: 12px; color: var(--subtext); display: block; }
-    .balance-box span { font-size: 16px; font-weight: bold; color: var(--success); }
+    .balance-box label { font-size: 11px; color: var(--subtext); display: block; }
+    .balance-box span { font-size: 15px; font-weight: bold; color: var(--success); }
 
     .crypto-prices {
       display: flex;
@@ -121,11 +121,11 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
-      font-size: 12px;
+      font-size: 11px;
     }
     th, td {
       border: 1px solid var(--border);
-      padding: 8px;
+      padding: 6px;
       text-align: center;
     }
     th { background: #2b2f36; color: var(--accent); }
@@ -152,6 +152,8 @@
     .nav-item span { font-size: 16px; margin-bottom: 2px; }
 
     .note { font-size: 11px; color: var(--accent); margin-top: 4px; display: block; }
+    .withdraw-note { font-size: 12px; color: var(--success); font-weight: bold; background: #181a20; padding: 8px; border-radius: 6px; margin-bottom: 10px; }
+    .badge-vip { background: var(--accent); color: #000; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
     .page { display: none; }
     .page.active { display: block; }
   </style>
@@ -176,7 +178,7 @@
     </div>
   </div>
 
-  <!-- التطبيق الرئيسي بعد الدخول -->
+  <!-- التطبيق الرئيسي -->
   <div id="app" style="display:none;">
     <div class="header">
       <div class="brand">
@@ -195,12 +197,16 @@
       <div id="page-home" class="page active">
         <div class="balance-grid">
           <div class="balance-box">
-            <label>رصيد الدولار ($)</label>
-            <span id="bal-usd">$0.00</span>
+            <label>رأس المال ($) <span class="badge-vip" id="badge-usd">VIP 0</span></label>
+            <span id="cap-usd">$0.00</span>
+            <label style="margin-top:4px;">أرباح متاح للسحب</label>
+            <span id="prof-usd" style="color:var(--accent);">$0.00</span>
           </div>
           <div class="balance-box">
-            <label>رصيد الليرة السورية (S.P)</label>
-            <span id="bal-syp">0 L.S</span>
+            <label>رأس المال (S.P) <span class="badge-vip" id="badge-syp">VIP 0</span></label>
+            <span id="cap-syp">0 L.S</span>
+            <label style="margin-top:4px;">أرباح متاح للسحب</label>
+            <span id="prof-syp" style="color:var(--accent);">0 L.S</span>
           </div>
         </div>
 
@@ -224,7 +230,7 @@
         <div class="card">
           <div class="trust-text">
             <b>لماذا يختار الاستثماريون منصة LKPO؟</b><br>
-            تضمن منصة LKPO أقصى درجات الأمان والشفافية في إدارة أصولك الرقمية. نحن نوفر نظام تداول آلي قائم على أحدث تقنيات الذكاء الاصطناعي مع ضمان سيولة عالية وعمليات إيداع وسحب فورية على مدار الساعة.
+            تضمن منصة LKPO أقصى درجات الأمان والشفافية. اشترك في إحدى باقات VIP لتفعيل الروبوت واستلام أرباحك بشكل فوري مع إمكانية السحب على مدار 24 ساعة.
           </div>
           <button onclick="window.open('https://t.me/your_telegram_support', '_blank')" style="margin-top:10px; background:#229ED9; color:#fff;">الدعم الفني عبر التلغرام ✈️</button>
         </div>
@@ -234,13 +240,13 @@
       <div id="page-invest" class="page">
         <div class="card">
           <h3>روبوت الاستثمار بالدولار 🤖</h3>
-          <p style="font-size:12px; color:var(--subtext);">تنفيذ مهمة واحدة كل 24 ساعة لتحقيق أرباح مستقرة.</p>
-          <button onclick="alert('تم تشغيل روبوت الدولار بنجاح!')" class="btn-success">تشغيل روبوت الدولار (24H)</button>
+          <p style="font-size:12px; color:var(--subtext);">يتطلب الاشتراك في باقة VIP دولار لتفعيل المهمة وتوليد الربح.</p>
+          <button onclick="runBot('usd')" class="btn-success">تشغيل روبوت الدولار (24H)</button>
         </div>
         <div class="card">
           <h3>روبوت الاستثمار بالليرة السورية 🇸🇾</h3>
-          <p style="font-size:12px; color:var(--subtext);">مخصص للاستثمار المحلي بأرباح يومية.</p>
-          <button onclick="alert('تم تشغيل روبوت الليرة بنجاح!')" class="btn-success">تشغيل روبوت الليرة (24H)</button>
+          <p style="font-size:12px; color:var(--subtext);">يتطلب الاشتراك في باقة VIP ليرة سورية لتفعيل المهمة وتوليد الربح.</p>
+          <button onclick="runBot('syp')" class="btn-success">تشغيل روبوت الليرة (24H)</button>
         </div>
       </div>
 
@@ -249,7 +255,7 @@
         <div class="card">
           <h3>اشتراكات VIP - الدولار ($)</h3>
           <table>
-            <thead><tr><th>المستوى</th><th>السعر</th><th>الربح اليومي</th><th>المدة</th><th>إجراء</th></tr></thead>
+            <thead><tr><th>المستوى</th><th>سعر الاشتراك</th><th>نسبة الربح</th><th>الربح اليومي</th><th>إجراء</th></tr></thead>
             <tbody id="vip-usd-list"></tbody>
           </table>
         </div>
@@ -260,7 +266,7 @@
         <div class="card">
           <h3>اشتراكات VIP - الليرة السورية (SYP)</h3>
           <table>
-            <thead><tr><th>المستوى</th><th>السعر</th><th>الربح اليومي</th><th>المدة</th><th>إجراء</th></tr></thead>
+            <thead><tr><th>المستوى</th><th>سعر الاشتراك</th><th>نسبة الربح</th><th>الربح اليومي</th><th>إجراء</th></tr></thead>
             <tbody id="vip-syp-list"></tbody>
           </table>
         </div>
@@ -269,7 +275,7 @@
       <!-- 5. صفحة السجل -->
       <div id="page-logs" class="page">
         <div class="card">
-          <h3>سجل المعاملات والعمليات</h3>
+          <h3>سجل المعاملات والأرباح</h3>
           <table>
             <thead><tr><th>التاريخ والتوقيت</th><th>النوع والوسيلة</th><th>المبلغ</th><th>الحالة</th></tr></thead>
             <tbody id="logs-list">
@@ -355,6 +361,7 @@
     const API_URL = "https://lkpo.onrender.com";
     let isRegisterMode = false;
     let currentUser = JSON.parse(localStorage.getItem('user')) || null;
+    let userData = { capitalUSD:0, profitUSD:0, capitalSYP:0, profitSYP:0, activeVipUSD:0, activeVipSYP:0 };
 
     window.onload = () => {
       if (currentUser) loadApp();
@@ -400,13 +407,16 @@
       document.getElementById('prof-email').innerText = currentUser.email;
       document.getElementById('prof-id').innerText = Math.floor(100000 + Math.random() * 900000);
 
-      // جلب بيانات الحساب وتحديث الأرصدة من السيرفر
       try {
         const res = await fetch(`${API_URL}/api/user/${currentUser.email}`);
         if (res.ok) {
-          const userData = await res.json();
-          document.getElementById('bal-usd').innerText = `$${userData.balanceUSD || 0}`;
-          document.getElementById('bal-syp').innerText = `${userData.balanceSYP || 0} L.S`;
+          userData = await res.json();
+          document.getElementById('cap-usd').innerText = `$${userData.capitalUSD || 0}`;
+          document.getElementById('prof-usd').innerText = `$${userData.profitUSD || 0}`;
+          document.getElementById('cap-syp').innerText = `${userData.capitalSYP || 0} L.S`;
+          document.getElementById('prof-syp').innerText = `${userData.profitSYP || 0} L.S`;
+          document.getElementById('badge-usd').innerText = `VIP ${userData.activeVipUSD || 0}`;
+          document.getElementById('badge-syp').innerText = `VIP ${userData.activeVipSYP || 0}`;
         }
       } catch (e) {}
 
@@ -417,6 +427,36 @@
 
       renderVIPLists();
       loadUserLogs();
+    }
+
+    async function subscribeVip(level, type) {
+      try {
+        const res = await fetch(`${API_URL}/api/vip/subscribe`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentUser.email, level: level, type: type })
+        });
+        const data = await res.json();
+        alert(data.message);
+        loadApp();
+      } catch (err) {
+        alert("حدث خطأ في الاتصال");
+      }
+    }
+
+    async function runBot(type) {
+      try {
+        const res = await fetch(`${API_URL}/api/bot/run`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentUser.email, type: type })
+        });
+        const data = await res.json();
+        alert(data.message);
+        loadApp();
+      } catch (err) {
+        alert("حدث خطأ أثناء الاتصال بالسيرفر");
+      }
     }
 
     function switchTab(pageId, element) {
@@ -431,18 +471,52 @@
     }
 
     function renderVIPLists() {
+      // VIP USD
       const usdContainer = document.getElementById('vip-usd-list');
       usdContainer.innerHTML = '';
-      [5, 20, 50, 100, 300, 500, 1000, 2000].forEach((price, idx) => {
-        const daily = (price * (0.15 + idx * 0.02)).toFixed(2);
-        usdContainer.innerHTML += `<tr><td>VIP ${idx+1}</td><td>$${price}</td><td>$${daily}</td><td>30 يوم</td><td><button onclick="alert('تم إرسال طلب الاشتراك')" style="padding:4px;">اشتراك</button></td></tr>`;
+      const usdPacks = [
+        { l: 1, p: 5, r: 15 }, { l: 2, p: 20, r: 17 }, { l: 3, p: 50, r: 19 }, { l: 4, p: 100, r: 21 },
+        { l: 5, p: 300, r: 23 }, { l: 6, p: 500, r: 25 }, { l: 7, p: 1000, r: 27 }, { l: 8, p: 2000, r: 30 }
+      ];
+      usdPacks.forEach(pack => {
+        const daily = (pack.p * (pack.r / 100)).toFixed(2);
+        const isCurrent = userData.activeVipUSD === pack.l;
+        usdContainer.innerHTML += `
+          <tr>
+            <td>VIP ${pack.l}</td>
+            <td>$${pack.p}</td>
+            <td style="color:var(--success); font-weight:bold;">${pack.r}%</td>
+            <td>$${daily}</td>
+            <td>
+              <button onclick="subscribeVip(${pack.l}, 'usd')" style="padding:4px;" ${isCurrent ? 'disabled style="background:gray;"' : ''}>
+                ${isCurrent ? 'نشط' : 'اشتراك'}
+              </button>
+            </td>
+          </tr>`;
       });
 
+      // VIP SYP
       const sypContainer = document.getElementById('vip-syp-list');
       sypContainer.innerHTML = '';
-      [675, 2700, 6750, 13500, 40500, 67500, 135000, 270000].forEach((price, idx) => {
-        const daily = (price * (0.15 + idx * 0.02)).toFixed(0);
-        sypContainer.innerHTML += `<tr><td>VIP ${idx+1}</td><td>${price} L.S</td><td>${daily} L.S</td><td>30 يوم</td><td><button onclick="alert('تم إرسال طلب الاشتراك')" style="padding:4px;">اشتراك</button></td></tr>`;
+      const sypPacks = [
+        { l: 1, p: 675, r: 15 }, { l: 2, p: 2700, r: 17 }, { l: 3, p: 6750, r: 19 }, { l: 4, p: 13500, r: 21 },
+        { l: 5, p: 40500, r: 23 }, { l: 6, p: 67500, r: 25 }, { l: 7, p: 135000, r: 27 }, { l: 8, p: 270000, r: 30 }
+      ];
+      sypPacks.forEach(pack => {
+        const daily = Math.round(pack.p * (pack.r / 100));
+        const isCurrent = userData.activeVipSYP === pack.l;
+        sypContainer.innerHTML += `
+          <tr>
+            <td>VIP ${pack.l}</td>
+            <td>${pack.p}</td>
+            <td style="color:var(--success); font-weight:bold;">${pack.r}%</td>
+            <td>${daily} L.S</td>
+            <td>
+              <button onclick="subscribeVip(${pack.l}, 'syp')" style="padding:4px;" ${isCurrent ? 'disabled style="background:gray;"' : ''}>
+                ${isCurrent ? 'نشط' : 'اشتراك'}
+              </button>
+            </td>
+          </tr>`;
       });
     }
 
@@ -466,11 +540,12 @@
         `;
       } else if (type === 'draw-usd') {
         content.innerHTML = `
-          <h3>سحب بالدولار ($)</h3>
+          <h3>سحب أرباح الدولار ($)</h3>
+          <div class="withdraw-note">المبلغ المتاح للسحب (الأرباح): $${userData.profitUSD || 0}</div>
           <select id="tx-method"><option>TRC20</option><option>BEP20</option><option>ERC20</option></select>
           <input type="text" id="tx-address" placeholder="عنوان محفظتك لاستلام المال">
           <input type="number" id="tx-amount" placeholder="كمية السحب ($)">
-          <span class="note">أقل سحب هو 1$</span>
+          <span class="note">أقل سحب هو 1$ (رأس المال غير قابل للسحب)</span>
           <button class="btn-success" onclick="sendTransaction('سحب', 'دولار (USDT)')">إرسال طلب السحب</button>
           <button class="btn-danger" onclick="closeModal()">إلغاء</button>
         `;
@@ -487,10 +562,11 @@
         `;
       } else if (type === 'draw-sham') {
         content.innerHTML = `
-          <h3>سحب شام كاش (SYP)</h3>
+          <h3>سحب أرباح شام كاش (SYP)</h3>
+          <div class="withdraw-note">المبلغ المتاح للسحب (الأرباح): ${userData.profitSYP || 0} L.S</div>
           <input type="text" id="tx-address" placeholder="عنوان محفظة شام كاش لاستلام المال">
           <input type="number" id="tx-amount" placeholder="كمية السحب (ليرة سورية)">
-          <span class="note">أقل سحب هو 135 ليرة</span>
+          <span class="note">أقل سحب هو 135 ليرة (رأس المال غير قابل للسحب)</span>
           <button class="btn-success" onclick="sendTransaction('سحب', 'شام كاش')">إرسال طلب السحب</button>
           <button class="btn-danger" onclick="closeModal()">إلغاء</button>
         `;
@@ -525,9 +601,11 @@
         });
         const data = await res.json();
         alert(data.message);
-        closeModal();
-        loadUserLogs();
-        if (currentUser.email === ADMIN_EMAIL) loadAdminRequests();
+        if (res.ok) {
+          closeModal();
+          loadUserLogs();
+          if (currentUser.email === ADMIN_EMAIL) loadAdminRequests();
+        }
       } catch (err) {
         alert("حدث خطأ أثناء إرسال الطلب للسيرفر");
       }
