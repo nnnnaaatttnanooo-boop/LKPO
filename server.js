@@ -3,94 +3,114 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
-
-// إعداد CORS للسموح بجميع الطلبات والواجهات
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
 app.use(express.json());
+app.use(cors());
 
-// الاتصال بقاعدة البيانات
+// رابط قاعدة البيانات
 const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://mohamadshk654_db_user:Ayhm2002@cluster0.ositygo.mongodb.net/?appName=Cluster0";
 
 mongoose.connect(MONGO_URI)
-  .then(() => console.log("تم الاتصال بقاعدة البيانات MongoDB بنجاح"))
-  .catch(err => console.error("خطأ في الاتصال بقاعدة البيانات:", err));
+  .then(() => console.log('✅ تم الاتصال بقاعدة البيانات بنجاح'))
+  .catch(err => console.error('❌ خطأ في الاتصال بقاعدة البيانات:', err));
 
-const userSchema = new mongoose.Schema({
+// 1. مخطط المستخدم
+const UserSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  balance: { type: Number, default: 0 },
+  balanceUSD: { type: Number, default: 0 },
+  balanceSYP: { type: Number, default: 0 },
   vipLevel: { type: Number, default: 1 },
+  referralCode: { type: String, default: '' },
   createdAt: { type: Date, default: Date.now }
 });
+const User = mongoose.model('User', UserSchema);
 
-const User = mongoose.model('User', userSchema);
-
-const depositSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  amount: { type: Number, required: true },
-  status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+// 2. مخطط المعاملات والطلبات (إيداع وسحب)
+const TransactionSchema = new mongoose.Schema({
+  userId: String,
+  userEmail: String,
+  type: String,        // 'إيداع' أو 'سحب'
+  method: String,      // 'دولار (USDT)' أو 'شام كاش'
+  network: String,     // 'TRC20', 'BEP20', إلخ
+  amount: Number,
+  addressOrCode: String, // عنوان محفظة المستخدم للسحب
+  status: { type: String, default: 'قيد الانتظار' },
   createdAt: { type: Date, default: Date.now }
 });
+const Transaction = mongoose.model('Transaction', TransactionSchema);
 
-const Deposit = mongoose.model('Deposit', depositSchema);
+// === مسارات المستخدمين (Auth) ===
 
-app.get('/', (req, res) => {
-  res.send("LKPO Server is Running Successfully!");
-});
-
-// فتح حساب جديد
 app.post('/api/register', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ message: "يرجى تعبئة جميع الحقول" });
-    }
+    const { username, password, referralCode } = req.body;
     const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ message: "اسم المستخدم مستخدم بالفعل" });
-    }
+    if (existingUser) return res.status(400).json({ success: false, message: 'اسم المستخدم/البريد مسجل بالفعل' });
 
-    const newUser = new User({ username, password, balance: 0, vipLevel: 1 });
+    const newUser = new User({ username, password, referralCode: referralCode || '' });
     await newUser.save();
-    return res.status(201).json({ message: "تم إنشاء الحساب بنجاح! رصيدك $0", user: newUser });
+    res.json({ success: true, message: 'تم فتح الحساب بنجاح!', user: newUser });
   } catch (err) {
-    return res.status(500).json({ message: "حدث خطأ في السيرفر: " + err.message });
+    res.status(500).json({ success: false, message: 'حدث خطأ في السيرفر' });
   }
 });
 
-// تسجيل الدخول
 app.post('/api/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username, password });
-    if (!user) {
-      return res.status(400).json({ message: "بيانات الدخول غير صحيحة" });
-    }
+    if (!user) return res.status(400).json({ success: false, message: 'بيانات الدخول غير صحيحة' });
 
-    return res.json({ message: "تم تسجيل الدخول بنجاح", user });
+    res.json({ success: true, message: 'تم تسجيل الدخول بنجاح!', user });
   } catch (err) {
-    return res.status(500).json({ message: "حدث خطأ في السيرفر: " + err.message });
+    res.status(500).json({ success: false, message: 'حدث خطأ في السيرفر' });
   }
 });
 
-// طلب إيداع
-app.post('/api/deposit/request', async (req, res) => {
+// === مسارات المعاملات والطلبات ===
+
+// إرسال طلب جديد (إيداع أو سحب)
+app.post('/api/transactions/request', async (req, res) => {
   try {
-    const { userId, amount } = req.body;
-    const deposit = new Deposit({ userId, amount, status: 'pending' });
-    await deposit.save();
-    return res.json({ message: "تم إرسال طلب الإيداع وهو قيد المراجعة", deposit });
+    const { userId, userEmail, type, method, network, amount, addressOrCode } = req.body;
+    const tx = new Transaction({ userId, userEmail, type, method, network, amount, addressOrCode });
+    await tx.save();
+    res.json({ success: true, message: 'تم إرسال الطلب بنجاح، وهو قيد المراجعة' });
   } catch (err) {
-    return res.status(500).json({ message: "حدث خطأ في السيرفر: " + err.message });
+    res.status(500).json({ success: false, message: 'حدث خطأ أثناء حفظ الطلب' });
+  }
+});
+
+// جلب سجل المعاملات لمستخدم معين
+app.get('/api/transactions/user/:email', async (req, res) => {
+  try {
+    const txs = await Transaction.find({ userEmail: req.params.email }).sort({ createdAt: -1 });
+    res.json(txs);
+  } catch (err) {
+    res.status(500).json([]);
+  }
+});
+
+// جلب جميع الطلبات المعلقة للأدمن
+app.get('/api/transactions/admin', async (req, res) => {
+  try {
+    const txs = await Transaction.find({ status: 'قيد الانتظار' }).sort({ createdAt: -1 });
+    res.json(txs);
+  } catch (err) {
+    res.status(500).json([]);
+  }
+});
+
+// تحديث حالة الطلب من الأدمن (مقبول / مرفوض)
+app.post('/api/transactions/admin/update', async (req, res) => {
+  try {
+    const { txId, status } = req.body;
+    await Transaction.findByIdAndUpdate(txId, { status });
+    res.json({ success: true, message: `تمت تحديث حالة الطلب إلى: ${status}` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'فشل في تحديث حالة الطلب' });
   }
 });
 
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log(`LKPO Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 السيرفر يعمل على المنفذ ${PORT}`));
