@@ -14,7 +14,7 @@ app.use(cors({
 app.use(express.json());
 
 // الاتصال بقاعدة البيانات
-const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://mohamadshk654_db_user:U4QMfaokmmmO61QE@cluster0.ositygo.mongodb.net/?appName=Cluster0";
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://mohamadshk654_db_user:Ayhm2002@cluster0.ositygo.mongodb.net/?appName=Cluster0";
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log("تم الاتصال بقاعدة البيانات MongoDB بنجاح"))
