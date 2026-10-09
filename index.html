@@ -169,7 +169,7 @@
         <input type="password" id="auth-password" placeholder="كلمة المرور">
         <div id="register-fields" style="display:none;">
           <input type="password" id="auth-confirm-password" placeholder="تأكيد كلمة المرور">
-          <input type="text" id="auth-referral" placeholder="رمز الإحالة (اختياري)">
+          <input type="text" id="auth-referral" placeholder="كود الداعي (اختياري)">
         </div>
         
         <button id="btn-primary-auth" onclick="submitAuth()">تسجيل الدخول</button>
@@ -244,7 +244,7 @@
           <button onclick="runBot('usd')" class="btn-success">تشغيل روبوت الدولار (24H)</button>
         </div>
         <div class="card">
-          <h3>روبوت الاستثمار بالليرة السورية</h3>
+          <h3>روبوت الاستثمار بالليرة السورية 🇸🇾</h3>
           <p style="font-size:12px; color:var(--subtext);">يتطلب الاشتراك في باقة VIP ليرة سورية لتفعيل المهمة وتوليد الربح.</p>
           <button onclick="runBot('syp')" class="btn-success">تشغيل روبوت الليرة (24H)</button>
         </div>
@@ -285,20 +285,35 @@
         </div>
       </div>
 
-      <!-- 6. صفحة الفريق (تم تصحيح توليد الرابط التلقائي هنا) -->
+      <!-- 6. صفحة الفريق مع كود الدعوة والتقرير الكامل -->
       <div id="page-team" class="page">
         <div class="card">
-          <h3>برنامج إحالة الفريق</h3>
-          <p style="font-size:13px;">رابط الدعوة الخاص بك:</p>
-          <input type="text" id="ref-link" readonly value="جاري تحميل الرابط...">
+          <h3>برنامج إحالة الفريق 👥</h3>
+          <p style="font-size:13px;">كود الدعوة الخاص بك:</p>
+          <input type="text" id="my-ref-code" readonly value="-" style="font-weight:bold; color:var(--accent); text-align:center; font-size:18px;">
+          
+          <p style="font-size:13px; margin-top:10px;">رابط الدعوة المباشر:</p>
+          <input type="text" id="ref-link" readonly value="جاري التحميل...">
           <button onclick="navigator.clipboard.writeText(document.getElementById('ref-link').value); alert('تم نسخ رابط الدعوة الخاص بك!');">نسخ الرابط</button>
-          <h4 style="margin-top:20px;">جدول أرباح الفريق</h4>
+          
+          <div class="balance-grid" style="margin-top:15px;">
+            <div class="balance-box">
+              <label>عدد الأعضاء المدعوين</label>
+              <span id="team-count" style="color:var(--accent);">0 أعضاء</span>
+            </div>
+            <div class="balance-box">
+              <label>أرباح الإحالات ($)</label>
+              <span id="team-earnings-usd">$0.00</span>
+            </div>
+          </div>
+
+          <h4 style="margin-top:15px;">جدول عمولات الإحالة المباشرة</h4>
           <table>
-            <thead><tr><th>المستوى</th><th>نسبة العمولة</th></tr></thead>
+            <thead><tr><th>المستوى</th><th>نسبة العمولة</th><th>طريقة الاحتساب</th></tr></thead>
             <tbody>
-              <tr><td>المستوى 1 (مباشر)</td><td>10%</td></tr>
-              <tr><td>المستوى 2</td><td>3%</td></tr>
-              <tr><td>المستوى 3</td><td>1%</td></tr>
+              <tr><td>المستوى 1 (مباشر)</td><td>10%</td><td>تُضاف مباشرة لرصيد الأرباح عند اشتراك الفريق في VIP</td></tr>
+              <tr><td>المستوى 2</td><td>3%</td><td>تراكمية</td></tr>
+              <tr><td>المستوى 3</td><td>1%</td><td>تراكمية</td></tr>
             </tbody>
           </table>
         </div>
@@ -309,7 +324,7 @@
         <div class="card">
           <h3>تفاصيل الحساب</h3>
           <p>البريد: <b id="prof-email">-</b></p>
-          <p>رقم التعريف (ID): <b id="prof-id">-</b></p>
+          <p>كود الإحالة: <b id="prof-ref" style="color:var(--accent);">-</b></p>
           <button onclick="logout()" class="btn-danger">تسجيل الخروج</button>
         </div>
       </div>
@@ -361,14 +376,22 @@
     const API_URL = "https://lkpo.onrender.com";
     let isRegisterMode = false;
     let currentUser = JSON.parse(localStorage.getItem('user')) || null;
-    let userData = { capitalUSD:0, profitUSD:0, capitalSYP:0, profitSYP:0, activeVipUSD:0, activeVipSYP:0 };
+    let userData = { capitalUSD:0, profitUSD:0, capitalSYP:0, profitSYP:0, activeVipUSD:0, activeVipSYP:0, referralCode:'', invitedCount:0, referralEarningsUSD:0 };
 
     window.onload = () => {
+      // قراءة كود الإحالة التلقائي من رابط الموقع إن وجد
+      const urlParams = new URLSearchParams(window.location.search);
+      const refParam = urlParams.get('ref');
+      if (refParam) {
+        toggleAuthMode(true);
+        document.getElementById('auth-referral').value = refParam;
+      }
+
       if (currentUser) loadApp();
     };
 
-    function toggleAuthMode() {
-      isRegisterMode = !isRegisterMode;
+    function toggleAuthMode(forceRegister = false) {
+      isRegisterMode = forceRegister ? true : !isRegisterMode;
       document.getElementById('register-fields').style.display = isRegisterMode ? 'block' : 'none';
       document.getElementById('btn-primary-auth').innerText = isRegisterMode ? 'إنشاء حساب جديد' : 'تسجيل الدخول';
       document.getElementById('btn-toggle-auth').innerText = isRegisterMode ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'ليس لديك حساب؟ فتح حساب جديد';
@@ -405,11 +428,6 @@
       document.getElementById('auth-page').style.display = 'none';
       document.getElementById('app').style.display = 'block';
       document.getElementById('prof-email').innerText = currentUser.email;
-      document.getElementById('prof-id').innerText = currentUser._id || Math.floor(100000 + Math.random() * 900000);
-
-      // توليد رابط الدعوة الفعلي والمباشر للمستخدم
-      const siteUrl = window.location.origin + window.location.pathname;
-      document.getElementById('ref-link').value = `${siteUrl}?ref=${currentUser.email}`;
 
       try {
         const res = await fetch(`${API_URL}/api/user/${currentUser.email}`);
@@ -421,6 +439,16 @@
           document.getElementById('prof-syp').innerText = `${userData.profitSYP || 0} L.S`;
           document.getElementById('badge-usd').innerText = `VIP ${userData.activeVipUSD || 0}`;
           document.getElementById('badge-syp').innerText = `VIP ${userData.activeVipSYP || 0}`;
+
+          // تحديث بيانات الإحالة وكود الدعوة
+          const myCode = userData.referralCode || 'LK100000';
+          document.getElementById('prof-ref').innerText = myCode;
+          document.getElementById('my-ref-code').value = myCode;
+          document.getElementById('team-count').innerText = `${userData.invitedCount || 0} أعضاء`;
+          document.getElementById('team-earnings-usd').innerText = `$${userData.referralEarningsUSD || 0}`;
+
+          const siteUrl = window.location.origin + window.location.pathname;
+          document.getElementById('ref-link').value = `${siteUrl}?ref=${myCode}`;
         }
       } catch (e) {}
 
