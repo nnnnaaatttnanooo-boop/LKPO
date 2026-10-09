@@ -3,17 +3,23 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
+
+// إعداد CORS للسموح بجميع الطلبات والواجهات
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
-// 1. الاتصال بقاعدة البيانات (ضع كلمة المرور الخاصة بك بدلاً من كلمة: ضع_كلمة_المرور_هنا)
+// الاتصال بقاعدة البيانات
 const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://mohamadshk654_db_user:U4QMfaokmmmO61QE@cluster0.ositygo.mongodb.net/?appName=Cluster0";
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log("تم الاتصال بقاعدة البيانات MongoDB بنجاح"))
   .catch(err => console.error("خطأ في الاتصال بقاعدة البيانات:", err));
 
-// 2. نموذج المستخدم (الرصيد يبدأ بـ 0 والمستوى vip1)
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -24,7 +30,6 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-// 3. نموذج الإيداعات
 const depositSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   amount: { type: Number, required: true },
@@ -34,24 +39,27 @@ const depositSchema = new mongoose.Schema({
 
 const Deposit = mongoose.model('Deposit', depositSchema);
 
-// --- المسارات البرمجية ---
-
 app.get('/', (req, res) => {
   res.send("LKPO Server is Running Successfully!");
 });
 
-// فتح حساب جديد (رصيد 0)
+// فتح حساب جديد
 app.post('/api/register', async (req, res) => {
   try {
     const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ message: "يرجى تعبئة جميع الحقول" });
+    }
     const existingUser = await User.findOne({ username });
-    if (existingUser) return res.status(400).json({ message: "اسم المستخدم مستخدم بالفعل" });
+    if (existingUser) {
+      return res.status(400).json({ message: "اسم المستخدم مستخدم بالفعل" });
+    }
 
     const newUser = new User({ username, password, balance: 0, vipLevel: 1 });
     await newUser.save();
-    res.status(201).json({ message: "تم إنشاء الحساب بنجاح. رصيدك الحالي 0$", user: newUser });
+    return res.status(201).json({ message: "تم إنشاء الحساب بنجاح! رصيدك $0", user: newUser });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ message: "حدث خطأ في السيرفر: " + err.message });
   }
 });
 
@@ -60,11 +68,13 @@ app.post('/api/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username, password });
-    if (!user) return res.status(400).json({ message: "بيانات الدخول غير صحيحة" });
+    if (!user) {
+      return res.status(400).json({ message: "بيانات الدخول غير صحيحة" });
+    }
 
-    res.json({ message: "تم تسجيل الدخول بنجاح", user });
+    return res.json({ message: "تم تسجيل الدخول بنجاح", user });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ message: "حدث خطأ في السيرفر: " + err.message });
   }
 });
 
@@ -74,36 +84,9 @@ app.post('/api/deposit/request', async (req, res) => {
     const { userId, amount } = req.body;
     const deposit = new Deposit({ userId, amount, status: 'pending' });
     await deposit.save();
-    res.json({ message: "تم إرسال طلب الإيداع وهو قيد المراجعة", deposit });
+    return res.json({ message: "تم إرسال طلب الإيداع وهو قيد المراجعة", deposit });
   } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// تأكيد الإيداع (إضافة المبلغ للرصيد وفتح VIP2)
-app.post('/api/admin/approve-deposit', async (req, res) => {
-  try {
-    const { depositId } = req.body;
-    const deposit = await Deposit.findById(depositId);
-    if (!deposit || deposit.status !== 'pending') {
-      return res.status(400).json({ message: "الطلب غير موجود أو تمت معالجته سابقاً" });
-    }
-
-    deposit.status = 'approved';
-    await deposit.save();
-
-    const user = await User.findById(deposit.userId);
-    if (user) {
-      user.balance += deposit.amount;
-      if (user.vipLevel < 2) {
-        user.vipLevel = 2; // فتح مستوى vip2
-      }
-      await user.save();
-    }
-
-    res.json({ message: "تم تأكيد الإيداع وإضافة المبلغ للرصيد وتفعيل VIP2", user });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ message: "حدث خطأ في السيرفر: " + err.message });
   }
 });
 
