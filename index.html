@@ -3,34 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منصة LKPO</title>
+  <title>منصة LKPO الاستثمارية</title>
   <style>
     body { 
-      font-family: Arial, sans-serif; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
       background-color: #121214; 
       color: #ffffff; 
       text-align: center; 
-      padding: 20px; 
+      padding: 15px; 
       margin: 0;
     }
     .card { 
       background: #1e2026; 
-      padding: 25px; 
-      margin: 20px auto; 
-      max-width: 400px; 
+      padding: 20px; 
+      margin: 15px auto; 
+      max-width: 450px; 
       border-radius: 12px; 
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
-    input, button { 
+    input, button, select { 
       width: 90%; 
       padding: 12px; 
-      margin: 10px 0; 
-      border-radius: 6px; 
+      margin: 8px 0; 
+      border-radius: 8px; 
       border: 1px solid #2b2f36; 
       box-sizing: border-box;
       font-size: 15px;
     }
-    input {
+    input, select {
       background-color: #121214;
       color: #ffffff;
     }
@@ -45,13 +45,36 @@
     button:hover {
       background-color: #d9a309;
     }
+    .btn-danger {
+      background-color: #f6465d;
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background-color: #d9384f;
+    }
     .status { 
       color: #0ecb81; 
       font-weight: bold; 
     }
     hr {
       border: 0.5px solid #2b2f36;
-      margin: 20px 0;
+      margin: 15px 0;
+    }
+    /* جدول المستويات */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid #2b2f36;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #2b2f36;
+      color: #f0b90b;
     }
   </style>
 </head>
@@ -62,13 +85,13 @@
   <!-- 1. نموذج التسجيل وتسجيل الدخول -->
   <div class="card" id="auth-card">
     <h2>تسجيل الدخول / فتح حساب</h2>
-    <input type="text" id="username" placeholder="اسم المستخدم">
+    <input type="text" id="username" placeholder="اسم المستخدم (البريد أو الهاتف)">
     <input type="password" id="password" placeholder="كلمة المرور">
     <button onclick="handleRegister()">فتح حساب جديد (رصيد $0)</button>
     <button onclick="handleLogin()">تسجيل الدخول</button>
   </div>
 
-  <!-- 2. لوحة تحكم المستخدم بعد تسجيل الدخول -->
+  <!-- 2. لوحة تحكم المستخدم الرئيسي -->
   <div class="card" id="user-card" style="display:none;">
     <h2>مرحباً، <span id="user-display-name"></span></h2>
     <p>الرصيد الحالي: <span class="status" id="user-balance">$0</span></p>
@@ -76,10 +99,36 @@
 
     <hr>
 
-    <h3>طلب إيداع (لفتح مستوى VIP2)</h3>
+    <!-- قسم الإيداع -->
+    <h3>طلب إيداع جديد</h3>
     <input type="number" id="deposit-amount" placeholder="المبلغ المراد إيداعه ($)">
-    <button onclick="handleDeposit()">إرسال طلب الإيداع</button>
-    <button onclick="handleLogout()" style="background-color: #f6465d; color: #fff; margin-top: 15px;">تسجيل الخروج</button>
+    <button onclick="handleDeposit()">إرسال طلب الإيداع للترقية/الشحن</button>
+
+    <hr>
+
+    <!-- جدول مستويات VIP -->
+    <h3>مستويات VIP والأرباح</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>المستوى</th>
+          <th>الإيداع المطلوب</th>
+          <th>الربح اليومي</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>VIP1</td><td>$0</td><td>افتراضي ($0)</td></tr>
+        <tr><td>VIP2</td><td>$20</td><td>$2.00</td></tr>
+        <tr><td>VIP3</td><td>$50</td><td>$5.50</td></tr>
+        <tr><td>VIP4</td><td>$100</td><td>$12.00</td></tr>
+        <tr><td>VIP5</td><td>$300</td><td>$38.00</td></tr>
+        <tr><td>VIP6</td><td>$500</td><td>$65.00</td></tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <button onclick="handleLogout()" class="btn-danger">تسجيل الخروج</button>
   </div>
 
   <script>
@@ -93,7 +142,7 @@
       }
     };
 
-    // فتح حساب جديد
+    // 1. فتح حساب جديد (يبدأ بـ $0 ورتبة VIP1)
     async function handleRegister() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
@@ -110,7 +159,6 @@
         
         if (res.ok) {
           alert(data.message || "تم إنشاء الحساب بنجاح!");
-          // التبديل إلى تسجيل الدخول التلقائي بعد التسجيل
           currentUser = data.user;
           localStorage.setItem('lkpo_user', JSON.stringify(currentUser));
           updateUI();
@@ -122,7 +170,7 @@
       }
     }
 
-    // تسجيل الدخول
+    // 2. تسجيل الدخول
     async function handleLogin() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
@@ -141,7 +189,7 @@
           currentUser = data.user;
           localStorage.setItem('lkpo_user', JSON.stringify(currentUser));
           alert(data.message || "تم تسجيل الدخول بنجاح!");
-          updateUI(); // التبديل الفوري للواجهة
+          updateUI();
         } else {
           alert(data.message || "فشلت عملية تسجيل الدخول");
         }
@@ -150,7 +198,7 @@
       }
     }
 
-    // طلب إيداع
+    // 3. إرسال طلب إيداع
     async function handleDeposit() {
       const amount = parseFloat(document.getElementById('deposit-amount').value);
       if (!amount || amount <= 0) return alert("يرجى إدخال مبلغ صحيح");
@@ -162,14 +210,14 @@
           body: JSON.stringify({ userId: currentUser._id, amount })
         });
         const data = await res.json();
-        alert(data.message || "تم إرسال طلب الإيداع");
+        alert(data.message || "تم إرسال طلب الإيداع بنجاح، بانتظار التأكيد");
         document.getElementById('deposit-amount').value = '';
       } catch (err) {
         alert("خطأ أثناء إرسال طلب الإيداع");
       }
     }
 
-    // تسجيل الخروج
+    // 4. تسجيل الخروج
     function handleLogout() {
       currentUser = null;
       localStorage.removeItem('lkpo_user');
@@ -177,7 +225,7 @@
       document.getElementById('user-card').style.display = 'none';
     }
 
-    // تحديث الشاشة
+    // 5. تحديث عناصر الشاشة
     function updateUI() {
       if (currentUser) {
         document.getElementById('auth-card').style.display = 'none';
