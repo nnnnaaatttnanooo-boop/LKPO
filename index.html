@@ -378,6 +378,30 @@
     let currentUser = JSON.parse(localStorage.getItem('user')) || null;
     let userData = { capitalUSD:0, profitUSD:0, capitalSYP:0, profitSYP:0, activeVipUSD:0, activeVipSYP:0, referralCode:'', invitedCount:0, referralEarningsUSD:0 };
 
+    // عناوين المحافظ الخاصة بكل شبكة إيداع (يمكنك استبدال القيم بالعناوين الحقيقية الخاصة بك)
+    const DEPOSIT_WALLETS = {
+      'TRC20': 'TBBazvxfMw44Y4cg7S731c8gZQjP6bW7Ru',
+      'BEP20': '0x0D4f7aeBCB66Ad8e8A2889C4E32c133234dAA32B',
+      'ERC20': '0x0D4f7aeBCB66Ad8e8A2889C4E32c133234dAA32B'
+    };
+
+    function updateDepositAddress() {
+      const select = document.getElementById('tx-method');
+      const addressInput = document.getElementById('deposit-wallet-address');
+      if (select && addressInput) {
+        const selectedNet = select.value;
+        addressInput.value = DEPOSIT_WALLETS[selectedNet] || DEPOSIT_WALLETS['TRC20'];
+      }
+    }
+
+    function copyDepositAddress() {
+      const addressInput = document.getElementById('deposit-wallet-address');
+      if (addressInput) {
+        navigator.clipboard.writeText(addressInput.value);
+        alert('تم نسخ عنوان الشبكة المحددة!');
+      }
+    }
+
     window.onload = () => {
       // قراءة كود الإحالة التلقائي من رابط الموقع إن وجد
       const urlParams = new URLSearchParams(window.location.search);
@@ -561,10 +585,14 @@
         content.innerHTML = `
           <h3>إيداع بالدولار ($)</h3>
           <label>اختر الشبكة:</label>
-          <select id="tx-method"><option>TRC20</option><option>BEP20</option><option>ERC20</option></select>
-          <p style="font-size:12px;">عنوان المحفظة للتحويل:</p>
-          <input type="text" readonly value="TBBazvxfMw44Y4cg7S731c8gZQjP6bW7Ru">
-          <button onclick="navigator.clipboard.writeText('TBBazvxfMw44Y4cg7S731c8gZQjP6bW7Ru'); alert('تم النسخ!');">نسخ العنوان</button>
+          <select id="tx-method" onchange="updateDepositAddress()">
+            <option value="TRC20">TRC20</option>
+            <option value="BEP20">BEP20</option>
+            <option value="ERC20">ERC20</option>
+          </select>
+          <p style="font-size:12px; margin-top:8px;">عنوان المحفظة للتحويل (حسب الشبكة المختارة):</p>
+          <input type="text" id="deposit-wallet-address" readonly value="${DEPOSIT_WALLETS['TRC20']}">
+          <button onclick="copyDepositAddress()">نسخ العنوان</button>
           <input type="number" id="tx-amount" placeholder="كمية الإيداع ($)">
           <span class="note">أقل إيداع هو 1$</span>
           <button class="btn-success" onclick="sendTransaction('إيداع', 'دولار (USDT)')">تأكيد الإيداع</button>
@@ -585,8 +613,8 @@
         content.innerHTML = `
           <h3>إيداع شام كاش (SYP)</h3>
           <p style="font-size:12px;">كود الحساب للتحويل:</p>
-          <input type="text" readonly value="عذرآ لم تتوفر الخدمة بعد">
-          <button onclick="navigator.clipboard.writeText('عذرآ لم تتوفر للخدمة بعد'); alert('تم النسخ!');">نسخ الكود</button>
+          <input type="text" id="sham-wallet-code" readonly value="عذرآ لم تتوفر الخدمة بعد">
+          <button onclick="navigator.clipboard.writeText(document.getElementById('sham-wallet-code').value); alert('تم النسخ!');">نسخ الكود</button>
           <input type="number" id="tx-amount" placeholder="كمية الإيداع (ليرة سورية)">
           <span class="note">أقل إيداع هو 135 ليرة</span>
           <button class="btn-success" onclick="sendTransaction('إيداع', 'شام كاش')">تأكيد الإيداع</button>
@@ -721,6 +749,7 @@
     }
 
     function logout() {
+      localStorage.removeItem('year');
       localStorage.removeItem('user');
       location.reload();
     }
